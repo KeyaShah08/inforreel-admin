@@ -1,3 +1,19 @@
+/* index.css */
+
+/* Basic reset for margins and paddings */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure html, body, and the root element take full viewport height and width */
+html, body, #root {
+  height: 100%; /* Ensures they take up 100% of the viewport height */
+  width: 100%;
+  overflow: hidden; /* Prevents scrollbars from appearing on the main page */
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -24,10 +40,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  min-width: 320px; /* Ensures a minimum width for responsiveness */
 }
 
 h1 {
