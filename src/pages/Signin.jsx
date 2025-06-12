@@ -196,56 +196,6 @@ function Signin() {
             >
               Sign In
             </button>
-
-            <div
-              style={{
-                textAlign: "right", // Aligned to right as per Figma
-                width: "100%", // Ensure this div takes full width for alignment
-                marginBottom: "32px", // Increased margin as per Figma
-              }}
-            >
-              <a
-                href="#"
-                style={{
-                  color: "#96105E", // InforReel Brand color
-                  textDecoration: "none",
-                  fontSize: "15px", // Slightly smaller font size
-                  fontWeight: "500", // Medium weight
-                }}
-              >
-                Forgot Password?
-              </a>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px", // Space between checkbox and label
-                justifyContent: "flex-start", // Aligns to the left
-                width: "100%", // Ensure this div takes full width for alignment
-              }}
-            >
-              <input
-                type="checkbox"
-                id="remember"
-                style={{
-                  accentColor: "#96105E", // Checkbox color
-                  transform: "scale(1.1)", // Slightly larger checkbox
-                  cursor: "pointer",
-                }}
-              />
-              <label
-                htmlFor="remember"
-                style={{
-                  fontSize: "15px", // Slightly smaller font size
-                  color: "#666", // Darker gray for text
-                  cursor: "pointer",
-                }}
-              >
-                Remember me
-              </label>
-            </div>
           </form>
         </div>
       </div>
