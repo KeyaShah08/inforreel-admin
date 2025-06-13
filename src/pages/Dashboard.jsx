@@ -1,6 +1,6 @@
 import * as d3 from "d3"; // Import D3.js for charting
 import { useEffect, useRef, useState } from "react";
-
+import { useNavigate, useLocation } from 'react-router-dom';
 // Mock Data for different periods
 // NOTE: For a real application, you would fetch actual daily, weekly, monthly, and yearly data.
 // This data is simulated to demonstrate the period switching functionality.
@@ -226,15 +226,34 @@ const LineChart = ({ data, chartId, title, tooltipText, highlightXValue, highlig
 };
 
 function Dashboard() {
-  const [activeMenuItem, setActiveMenuItem] = useState("Home"); // State for active sidebar item
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeMenuItem, setActiveMenuItem] = useState("Home");
   const [selectedPeriod, setSelectedPeriod] = useState("Monthly"); // State for active period (Daily, Weekly, Monthly, Yearly)
 
   const menuItems = [
-    { name: "Home", icon: "🏠" },
-    { name: "Business", icon: "🏢" },
-    { name: "Ambassadors", icon: "👥" },
+    { name: "Home", icon: "🏠", path: "/" },
+    { name: "Business", icon: "🏢", path: "/business" },
+    { name: "Ambassadors", icon: "👥", path: "/ambassadors" },
   ];
-
+  
+  // Update this function to properly sync with current route
+  useEffect(() => {
+    const currentMenuItem = () => {
+      switch(location.pathname) {
+        case '/': return 'Home';
+        case '/business': return 'Business';
+        case '/ambassadors': return 'Ambassadors';
+        default: return 'Home';
+      }
+    };
+    setActiveMenuItem(currentMenuItem());
+  }, [location.pathname]);
+  
+  const handleMenuClick = (item) => {
+    setActiveMenuItem(item.name);
+    navigate(item.path);
+  };
   // Function to get data based on selected period
   const getDataForPeriod = (type) => {
     switch (selectedPeriod) {
@@ -338,7 +357,7 @@ function Dashboard() {
                   gap: "10px",
                   transition: "background-color 0.2s ease, color 0.2s ease",
                 }}
-                onClick={() => setActiveMenuItem(item.name)}
+                onClick={() => handleMenuClick(item)}
               >
                 <span style={{ fontSize: "1.2em" }}>{item.icon}</span>{" "}
                 {item.name}
