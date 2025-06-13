@@ -1,37 +1,40 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import Header from "../components/Header"; // Corrected to lowercase 'header'
+import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 function Signin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const navigate = useNavigate();
 
-  // Email validation regex
+  // Define the single allowed admin credentials (still for client-side quick feedback)
+  const ALLOWED_ADMIN_EMAIL = "admin@example.com";
+  const ALLOWED_ADMIN_PASSWORD = "admin123";
+
+  // Email validation regex (kept as it validates format)
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
-  // Password validation regex:
-  // At least 8 characters long
-  // Contains at least one lowercase letter
-  // Contains at least one uppercase letter
-  // Contains at least one digit
-  // Contains at least one special character (!@#$%&*~).{8,}$/;
+  // REMOVED: Complex password validation regex
+  // NOW: Only checks if password field is empty
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*~]).{8,}$/;
-    return regex.test(password);
+    return password.length > 0; // Simple check: password must not be empty
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear the specific error when the user starts typing in that field
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    setApiError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
+
     const newErrors = {};
 
     // Validate Email
@@ -41,64 +44,93 @@ function Signin() {
       newErrors.email = "Invalid email format.";
     }
 
-    // Validate Password
+    // Validate Password (simplified)
     if (!formData.password) {
       newErrors.password = "Password is required.";
-    } else if (!validatePassword(formData.password)) {
-      newErrors.password =
-        "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.";
+    } else if (!validatePassword(formData.password)) { // This check will only hit if password is empty string now
+        newErrors.password = "Password cannot be empty."; // Updated message
     }
 
     setErrors(newErrors);
 
-    // If there are no errors, proceed with sign-in and redirect
-    if (Object.keys(newErrors).length === 0) {
-      // Simulate successful sign-in
-      console.log("Signing in with:", formData);
-      navigate("/dashboard"); // Redirect to the dashboard page
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    // Client-side check for specific admin credentials (as requested, but still not secure)
+    if (formData.email !== ALLOWED_ADMIN_EMAIL || formData.password !== ALLOWED_ADMIN_PASSWORD) {
+      setApiError("Invalid email or password.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://54.197.71.66:8080/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Sign-in API Response:", data);
+
+      if (response.ok && data.code === 200) {
+        console.log("Sign in successful. User data:", data.data);
+        navigate("/dashboard");
+      } else {
+        setApiError(data.message || "Sign in failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error("Error during sign-in API call:", error);
+      setApiError("Network error. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <Header />
-      {/* This main div now handles the full content area below the header */}
       <div
         style={{
-          backgroundColor: "#f5f5f5", // Light gray background
-          height: "calc(100vh - 70px)", // Fill remaining viewport height, accounting for fixed header
-          width: "100%", // Explicitly take full width
-          marginTop: "70px", // Push down to appear below the fixed header
-          display: "flex", // Flexbox for centering the child (the white login card)
-          justifyContent: "center", // Centers horizontally
-          alignItems: "center", // Centers vertically
-          fontFamily: "'Inter', sans-serif", // Keep font family here or move to index.css
+          backgroundColor: "#f5f5f5",
+          height: "calc(100vh - 70px)",
+          width: "100%",
+          marginTop: "70px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontFamily: "'Inter', sans-serif",
         }}
       >
-        {/* The white login card */}
         <div
           style={{
             backgroundColor: "#ffffff",
-            padding: "48px", // Increased padding from Figma (48px top/bottom, 40px left/right)
+            padding: "48px",
             borderRadius: "8px",
-            maxWidth: "450px", // Limits the card's maximum width as per Figma
-            width: "100%", // Allow card to shrink on smaller screens
+            maxWidth: "450px",
+            width: "100%",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center", // Centers content like "InforReel" and "Sign In" text within the card
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Soft shadow
-            minHeight: "400px", // Ensures the card has a minimum visual height
-            boxSizing: "border-box", // Include padding in width/height calculation
+            alignItems: "center",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+            minHeight: "400px",
+            boxSizing: "border-box",
           }}
         >
-      
           <h1
             style={{
-              fontSize: "28px", // Sign In text size
+              fontSize: "28px",
               textAlign: "center",
-              color: "#333", // Darker text color
-              fontWeight: "600", // Semi-bold
-              margin: "0 0 40px 0", // Increased bottom margin as per Figma
+              color: "#333",
+              fontWeight: "600",
+              margin: "0 0 40px 0",
             }}
           >
             Sign In
@@ -107,10 +139,10 @@ function Signin() {
           <form
             onSubmit={handleSubmit}
             style={{
-              width: "100%", // Form takes full width within the card
+              width: "100%",
               display: "flex",
               flexDirection: "column",
-              gap: "16px", // Space between form elements (inputs, button, links)
+              gap: "16px",
             }}
           >
             <input
@@ -120,13 +152,13 @@ function Signin() {
               value={formData.email}
               onChange={handleChange}
               style={{
-                width: "100%", // Input fields take full width of the form
-                padding: "16px", // Larger padding for input fields
+                width: "100%",
+                padding: "16px",
                 borderRadius: "6px",
-                border: errors.email ? "1px solid #dc3545" : "1px solid #ddd", // Red border if error
+                border: errors.email ? "1px solid #dc3545" : "1px solid #ddd",
                 backgroundColor: "#fff",
                 color: "#333",
-                fontSize: "16px", // Standard font size
+                fontSize: "16px",
                 outline: "none",
                 boxSizing: "border-box",
               }}
@@ -134,11 +166,11 @@ function Signin() {
             {errors.email && (
               <span
                 style={{
-                  color: "#dc3545", // Red color for error messages
+                  color: "#dc3545",
                   fontSize: "0.85rem",
-                  marginTop: "-12px", // Adjust to bring closer to input
-                  marginBottom: "4px", // Space after error message
-                  alignSelf: "flex-start", // Align text to start
+                  marginTop: "-12px",
+                  marginBottom: "4px",
+                  alignSelf: "flex-start",
                 }}
               >
                 {errors.email}
@@ -152,49 +184,63 @@ function Signin() {
               value={formData.password}
               onChange={handleChange}
               style={{
-                width: "100%", // Input fields take full width of the form
-                padding: "16px", // Larger padding for input fields
+                width: "100%",
+                padding: "16px",
                 borderRadius: "6px",
-                border: errors.password ? "1px solid #dc3545" : "1px solid #ddd", // Red border if error
+                border: errors.password ? "1px solid #dc3545" : "1px solid #ddd",
                 backgroundColor: "#fff",
                 color: "#333",
-                fontSize: "16px", // Standard font size
+                fontSize: "16px",
                 outline: "none",
                 boxSizing: "border-box",
-                // Removed marginBottom here, let the error span handle spacing
               }}
             />
             {errors.password && (
               <span
                 style={{
-                  color: "#dc3545", // Red color for error messages
+                  color: "#dc3545",
                   fontSize: "0.85rem",
-                  marginTop: "-12px", // Adjust to bring closer to input
-                  marginBottom: "12px", // Space after error message, before the button
-                  alignSelf: "flex-start", // Align text to start
+                  marginTop: "-12px",
+                  marginBottom: "12px",
+                  alignSelf: "flex-start",
                 }}
               >
                 {errors.password}
               </span>
             )}
 
+            {apiError && (
+              <span
+                style={{
+                  color: "#dc3545",
+                  fontSize: "0.9rem",
+                  marginBottom: "12px",
+                  textAlign: "center",
+                }}
+              >
+                {apiError}
+              </span>
+            )}
+
             <button
               type="submit"
+              disabled={loading}
               style={{
-                backgroundColor: "#96105E", // InforReel Brand color
+                backgroundColor: "#96105E",
                 color: "#fff",
-                padding: "16px 20px", // Larger padding for button
+                padding: "16px 20px",
                 border: "none",
                 borderRadius: "6px",
-                fontWeight: "600", // Semi-bold
-                fontSize: "16px", // Standard font size
-                cursor: "pointer",
-                width: "100%", // Button takes full width of the form
-                marginBottom: "16px", // Margin after button
-                transition: "background-color 0.3s ease", // Smooth transition for hover
+                fontWeight: "600",
+                fontSize: "16px",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                width: "100%",
+                marginBottom: "16px",
+                transition: "background-color 0.3s ease, opacity 0.3s ease",
               }}
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
         </div>
