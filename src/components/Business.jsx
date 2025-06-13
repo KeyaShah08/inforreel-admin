@@ -1,71 +1,84 @@
 // src/components/Business.jsx
 import { useState } from 'react';
 
-function Business() {
+// Accept onViewDetails prop
+function Business({ onViewDetails }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Pending'); // Default to Pending
   const [activeStatusFilter, setActiveStatusFilter] = useState('Pending'); // Default to Pending
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(3); // Show 3 items per page
+  const [itemsPerPage] = useState(10); // Show 10 items per page
 
-  // Mock data for businesses
+  // Mock data for businesses (total of 85 entries now)
   const businesses = [
-    {
-      id: 1,
-      name: 'TechCorp Solutions',
-      category: 'Fashion',
-      location: 'New York City, NY',
-      status: 'Pending',
-    },
-    {
-      id: 2,
-      name: 'Green Energy Co.',
-      category: 'Beauty',
-      location: 'New York City, NY',
-      status: 'Verified',
-    },
-    {
-      id: 3,
-      name: 'Digital Marketing Pro',
-      category: 'Health',
-      location: 'New York City, NY',
-      status: 'Pending',
-    },
-    {
-      id: 4,
-      name: 'Fashion Forward LLC',
-      category: 'Sports',
-      location: 'New York City, NY',
-      status: 'Denied',
-    },
-    {
-      id: 5,
-      name: 'HealthTech Innovations',
-      category: 'Fashion',
-      location: 'New York City, NY',
-      status: 'Pending',
-    },
-    {
-      id: 6,
-      name: 'Eco Solutions Inc.',
-      category: 'Environment',
-      location: 'San Francisco, CA',
-      status: 'Pending',
-    },
-    {
-      id: 7,
-      name: 'Smart Tech Ltd.',
-      category: 'Technology',
-      location: 'Seattle, WA',
-      status: 'Pending',
-    },
-    {
-      id: 8,
-      name: 'Beauty Brands Co.',
-      category: 'Beauty',
-      location: 'Los Angeles, CA',
-      status: 'Verified',
-    }
+    { id: 1, name: 'TechCorp Solutions', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
+    { id: 2, name: 'Green Energy Co.', category: 'Beauty', location: 'New York City, NY', status: 'Verified' },
+    { id: 3, name: 'Digital Marketing Pro', category: 'Health', location: 'New York City, NY', status: 'Pending' },
+    { id: 4, name: 'Fashion Forward LLC', category: 'Sports', location: 'New York City, NY', status: 'Denied' },
+    { id: 5, name: 'HealthTech Innovations', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
+    { id: 6, name: 'Eco Solutions Inc.', category: 'Environment', location: 'San Francisco, CA', status: 'Pending' },
+    { id: 7, name: 'Smart Tech Ltd.', category: 'Technology', location: 'Seattle, WA', status: 'Pending' },
+    { id: 8, name: 'Beauty Brands Co.', category: 'Beauty', location: 'Los Angeles, CA', status: 'Verified' },
+    { id: 9, name: 'Global Connect', category: 'Networking', location: 'Chicago, IL', status: 'Pending' },
+    { id: 10, name: 'Creative Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Verified' },
+    { id: 11, name: 'Foodie Express', category: 'Food & Beverage', location: 'Houston, TX', status: 'Pending' },
+    { id: 12, name: 'Fitness First', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
+    { id: 13, name: 'Edu Solutions', category: 'Education', location: 'Boston, MA', status: 'Pending' },
+    { id: 14, name: 'Home Comforts', category: 'Home Goods', location: 'Portland, OR', status: 'Verified' },
+    { id: 15, name: 'Travel Adventures', category: 'Travel', location: 'Orlando, FL', status: 'Pending' },
+    { id: 16, name: 'Auto Innovations', category: 'Automotive', location: 'Detroit, MI', status: 'Verified' },
+    { id: 17, name: 'Pet Paradise', category: 'Pet Supplies', location: 'Austin, TX', status: 'Pending' },
+    { id: 18, name: 'Music Makers', category: 'Entertainment', location: 'Nashville, TN', status: 'Denied' },
+    { id: 19, name: 'Construction Pros', category: 'Construction', location: 'Phoenix, AZ', status: 'Pending' },
+    { id: 20, name: 'Data Insights', category: 'Technology', location: 'San Jose, CA', status: 'Verified' },
+    { id: 21, name: 'Garden Guru', category: 'Home & Garden', location: 'Raleigh, NC', status: 'Pending' },
+    { id: 22, name: 'Finance Hub', category: 'Finance', location: 'Charlotte, NC', status: 'Verified' },
+    { id: 23, name: 'Legal Assist', category: 'Legal', location: 'Washington, D.C.', status: 'Pending' },
+    { id: 24, name: 'Event Planners', category: 'Events', location: 'Las Vegas, NV', status: 'Denied' },
+    { id: 25, name: 'Security Solutions', category: 'Security', location: 'San Antonio, TX', status: 'Pending' },
+    { id: 26, name: 'Future Innovations', category: 'Technology', location: 'New York City, NY', status: 'Pending' },
+    { id: 27, name: 'Urban Greens', category: 'Agriculture', location: 'San Francisco, CA', status: 'Pending' },
+    { id: 28, name: 'Artisan Crafts Co.', category: 'Arts & Crafts', location: 'Portland, OR', status: 'Pending' },
+    { id: 29, name: 'Mindful Living', category: 'Wellness', location: 'Boulder, CO', status: 'Pending' },
+    { id: 30, name: 'Code Academy', category: 'Education', location: 'Seattle, WA', status: 'Pending' },
+    { id: 31, name: 'Local Eats Hub', category: 'Food & Dining', location: 'Chicago, IL', status: 'Pending' },
+    { id: 32, name: 'Green Thumb Gardens', category: 'Landscaping', location: 'Austin, TX', status: 'Pending' },
+    { id: 33, name: 'Digital Creators', category: 'Marketing', location: 'Los Angeles, CA', status: 'Pending' },
+    { id: 34, name: 'Eco-Friendly Cleaners', category: 'Cleaning Services', location: 'Miami, FL', status: 'Pending' },
+    { id: 35, name: 'Adventure Gear Co.', category: 'Outdoor Sports', location: 'Denver, CO', status: 'Pending' },
+    // --- 10 NEW Verified Businesses ---
+    { id: 56, name: 'Verified Solutions Ltd', category: 'Consulting', location: 'New York City, NY', status: 'Verified' },
+    { id: 57, name: 'Secure Data Systems', category: 'IT Security', location: 'San Jose, CA', status: 'Verified' },
+    { id: 58, name: 'Elite Design Agency', category: 'Design', location: 'London, UK', status: 'Verified' },
+    { id: 59, name: 'Premium Auto Care', category: 'Automotive', location: 'Chicago, IL', status: 'Verified' },
+    { id: 60, name: 'Reliable Accounting', category: 'Finance', location: 'Houston, TX', status: 'Verified' },
+    { id: 61, name: 'Global Trade Hub', category: 'Import/Export', location: 'Los Angeles, CA', status: 'Verified' },
+    { id: 62, name: 'Fresh Produce Market', category: 'Food & Beverage', location: 'Miami, FL', status: 'Verified' },
+    { id: 63, name: 'Craft Brewing Co.', category: 'Brewery', location: 'Denver, CO', status: 'Verified' },
+    { id: 64, name: 'Urban Development Group', category: 'Real Estate', location: 'Seattle, WA', status: 'Verified' },
+    { id: 65, name: 'Precision Engineering', category: 'Manufacturing', location: 'Detroit, MI', status: 'Verified' },
+
+    // --- 20 NEW Denied Businesses ---
+    { id: 66, name: 'Shady Deals Inc.', category: 'Retail', location: 'Gotham City, NY', status: 'Denied' },
+    { id: 67, name: 'Bad Ideas Co.', category: 'Innovation', location: 'Springfield, IL', status: 'Denied' },
+    { id: 68, name: 'Questionable Services', category: 'Consulting', location: 'Metropolis, CA', status: 'Denied' },
+    { id: 69, name: 'Fake News Network', category: 'Media', location: 'Washington, D.C.', status: 'Denied' },
+    { id: 70, name: 'Broken Gadgets Repair', category: 'Electronics', location: 'Seattle, WA', status: 'Denied' },
+    { id: 71, name: 'Risky Investments', category: 'Finance', location: 'New York City, NY', status: 'Denied' },
+    { id: 72, name: 'Toxic Waste Disposal', category: 'Environment', location: 'Houston, TX', status: 'Denied' },
+    { id: 73, name: 'Unlicensed Practice', category: 'Health', location: 'Los Angeles, CA', status: 'Denied' },
+    { id: 74, name: 'Dubious Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Denied' },
+    { id: 75, name: 'Expired Goods Store', category: 'Food & Beverage', location: 'Chicago, IL', status: 'Denied' },
+    { id: 76, name: 'No-Show Movers', category: 'Logistics', location: 'Dallas, TX', status: 'Denied' },
+    { id: 77, name: 'Faulty Construction LLC', category: 'Construction', location: 'Phoenix, AZ', status: 'Denied' },
+    { id: 78, name: 'Unethical Marketing', category: 'Marketing', location: 'Boston, MA', status: 'Denied' },
+    { id: 79, name: 'Pirate Software Inc.', category: 'Software', location: 'San Francisco, CA', status: 'Denied' },
+    { id: 80, name: 'Ghost Tours Co.', category: 'Tourism', location: 'New Orleans, LA', status: 'Denied' },
+    { id: 81, name: 'Slippery Slope Sports', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
+    { id: 82, name: 'Obsolete Tech Revival', category: 'Technology', location: 'Raleigh, NC', status: 'Denied' },
+    { id: 83, name: 'Unsafe Driving School', category: 'Education', location: 'Atlanta, GA', status: 'Denied' },
+    { id: 84, name: 'Broken Promises Legal', category: 'Legal', location: 'Portland, OR', status: 'Denied' },
+    { id: 85, name: 'Expired Licenses Agency', category: 'Licensing', location: 'Las Vegas, NV', status: 'Denied' },
   ];
 
   // Calculate counts for each status
@@ -121,20 +134,41 @@ function Business() {
       case 'Active': return '#22C55E';
       case 'Pending': return '#F59E0B';
       case 'Inactive': return '#EF4444';
-      case 'Verified': return '#22C55E'; // Added for 'Verified' status
-      case 'Denied': return '#EF4444';   // Added for 'Denied' status
+      case 'Verified': return '#22C55E';
+      case 'Denied': return '#EF4444';
       default: return '#6B7280';
     }
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+
+    if (totalPages === 0) {
+      return [];
+    } else if (totalPages === 1) {
+      return [1];
+    } else if (totalPages === 2) {
+      return [1, 2];
+    } else { // totalPages > 2
+      if (currentPage === totalPages) {
+        // If on the last page, show the last two pages
+        pages.push(totalPages - 1, totalPages);
+      } else {
+        // For any other page (1 or middle pages), show the current page and the next page
+        pages.push(currentPage, currentPage + 1);
+      }
+    }
+    return pages;
   };
 
   return (
     <div
       style={{
         padding: "30px",
-        backgroundColor: "#f8f9fa", // Changed to match overall background
-        flexGrow: 1, // Added to fill available space
-        height: "100%", // Added for proper height
-        overflowY: "auto", // Added for scrolling if content overflows
+        backgroundColor: "#f8f9fa",
+        flexGrow: 1,
+        height: "100%",
+        overflowY: "auto",
       }}
     >
       <h1
@@ -156,10 +190,10 @@ function Business() {
           marginBottom: "30px",
           alignItems: "center",
           padding: "16px 24px",
-          backgroundColor: "#fff", // Moved background to here
+          backgroundColor: "#fff",
           borderRadius: "12px",
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)", // Enhanced shadow
-          border: "1px solid #f0f0f0", // Subtle border
+          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+          border: "1px solid #f0f0f0",
         }}
       >
         {[
@@ -177,9 +211,9 @@ function Business() {
               padding: "8px 12px",
               borderRadius: "6px",
               cursor: "pointer",
-              backgroundColor: activeStatusFilter === status.label ? "#e8f0fe" : "transparent", // Highlight color
+              backgroundColor: activeStatusFilter === status.label ? "#e8f0fe" : "transparent",
               transition: "background-color 0.2s",
-              border: activeStatusFilter === status.label ? `1px solid ${status.color}40` : "1px solid transparent", // Add border for active
+              border: activeStatusFilter === status.label ? `1px solid ${status.color}40` : "1px solid transparent",
             }}
             onMouseEnter={(e) => {
               if (activeStatusFilter !== status.label) {
@@ -203,11 +237,11 @@ function Business() {
             <span
               style={{
                 fontSize: "14px",
-                color: activeStatusFilter === status.label ? status.color : "#374151", // Text color for active status
-                fontWeight: activeStatusFilter === status.label ? "700" : "500", // Bold for active
+                color: activeStatusFilter === status.label ? status.color : "#374151",
+                fontWeight: activeStatusFilter === status.label ? "700" : "500",
               }}
             >
-              {status.label} ({status.count}) {/* Show count */}
+              {status.label} ({status.count})
             </span>
           </div>
         ))}
@@ -238,40 +272,22 @@ function Business() {
                     e.currentTarget.style.boxShadow = "inset 0 1px 2px rgba(0,0,0,0.05)";
                 }}
             />
-             <button
-              style={{
-                padding: "10px 16px",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: "#96105E",
-                color: "#fff",
-                fontSize: "14px",
-                fontWeight: "600",
-                cursor: "pointer",
-                transition: "background-color 0.2s, box-shadow 0.2s",
-                boxShadow: "0 2px 10px rgba(150,16,94,0.2)",
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#7a0c4e"}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#96105E"}
-            >
-              Add Business
-            </button>
         </div>
       </div>
 
       {/* Table */}
       <div
         style={{
-          backgroundColor: "#fff", // Table container background
+          backgroundColor: "#fff",
           borderRadius: "12px",
           padding: "16px",
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)", // Matching shadow
-          border: "1px solid #f0f0f0", // Matching border
+          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+          border: "1px solid #f0f0f0",
         }}
       >
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 8px" }}>
-            <thead style={{backgroundColor: "#F9F9F9", borderRadius: "8px"}}> {/* Added background and border-radius to thead */}
+            <thead style={{backgroundColor: "#F9F9F9", borderRadius: "8px"}}>
               <tr>
                 <th style={{ padding: "16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em",  borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px" }}>
                   Business Name
@@ -288,13 +304,15 @@ function Business() {
               </tr>
             </thead>
             <tbody>
-              {currentBusinesses.map((business, index) => (
+              {currentBusinesses.map((business) => (
                 <tr
                   key={business.id}
+                  onClick={() => onViewDetails(business.id)} // Add onClick to view details
                   style={{
                     backgroundColor: "#fff",
                     transition: "all 0.2s",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                    cursor: 'pointer', // Indicate it's clickable
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "#f9fafb";
@@ -405,16 +423,16 @@ function Business() {
             Previous
           </button>
 
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+          {/* Page Numbers - Dynamically shows 2 pages */}
+          {getPageNumbers().map((pageNumber) => (
             <button
               key={pageNumber}
               onClick={() => handlePageClick(pageNumber)}
               style={{
                 padding: "8px 12px",
                 borderRadius: "6px",
-                border: currentPage === pageNumber ? "1px solid #96105E" : "1px solid #d1d5db", // Changed highlight border color
-                backgroundColor: currentPage === pageNumber ? "#96105E" : "#fff", // Changed highlight background color
+                border: currentPage === pageNumber ? "1px solid #96105E" : "1px solid #d1d5db",
+                backgroundColor: currentPage === pageNumber ? "#96105E" : "#fff",
                 fontSize: "14px",
                 color: currentPage === pageNumber ? "#fff" : "#374151",
                 cursor: "pointer",
