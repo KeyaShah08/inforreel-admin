@@ -1,16 +1,17 @@
-// src/components/Business.jsx
-import { useState } from 'react';
+// src/pages/Dashboard.jsx
+import { useState } from "react";
+import Ambassador from "../components/Ambassador";
+import Business from "../components/Business";
+import BusinessInfo from "../components/BusinessInfo"; // Import the new BusinessInfo component
+import Home from "../components/Home";
+import Sidebar from "../components/Sidebar";
 
-// Accept onViewDetails prop
-function Business({ onViewDetails }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('Pending'); // Default to Pending
-  const [activeStatusFilter, setActiveStatusFilter] = useState('Pending'); // Default to Pending
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Show 10 items per page
+function Dashboard() {
+  const [activeMenuItem, setActiveMenuItem] = useState("Home"); // Default to Home
+  const [selectedBusinessId, setSelectedBusinessId] = useState(null); // New state for selected business ID
 
-  // Mock data for businesses (total of 85 entries now)
-  const businesses = [
+  // Centralized mock data for all businesses
+  const [businesses, setBusinesses] = useState([
     { id: 1, name: 'TechCorp Solutions', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
     { id: 2, name: 'Green Energy Co.', category: 'Beauty', location: 'New York City, NY', status: 'Verified' },
     { id: 3, name: 'Digital Marketing Pro', category: 'Health', location: 'New York City, NY', status: 'Pending' },
@@ -46,7 +47,26 @@ function Business({ onViewDetails }) {
     { id: 33, name: 'Digital Creators', category: 'Marketing', location: 'Los Angeles, CA', status: 'Pending' },
     { id: 34, name: 'Eco-Friendly Cleaners', category: 'Cleaning Services', location: 'Miami, FL', status: 'Pending' },
     { id: 35, name: 'Adventure Gear Co.', category: 'Outdoor Sports', location: 'Denver, CO', status: 'Pending' },
-    // --- 10 NEW Verified Businesses ---
+    { id: 36, name: 'Pioneer Ventures', category: 'Investment', location: 'San Diego, CA', status: 'Pending' },
+    { id: 37, name: 'Quantum Analytics', category: 'Technology', location: 'Boston, MA', status: 'Pending' },
+    { id: 38, name: 'Zenith Innovations', category: 'Technology', location: 'Dublin, Ireland', status: 'Pending' },
+    { id: 39, name: 'Oceanic Foods', category: 'Food & Beverage', location: 'Vancouver, Canada', status: 'Pending' },
+    { id: 40, name: 'Summit Sports', category: 'Sports', location: 'Salt Lake City, UT', status: 'Pending' },
+    { id: 41, name: 'Bright Future Education', category: 'Education', location: 'London, UK', status: 'Pending' },
+    { id: 42, name: 'Urban Craft Brewery', category: 'Food & Beverage', location: 'Berlin, Germany', status: 'Pending' },
+    { id: 43, name: 'Global Logistics Solutions', category: 'Logistics', location: 'Singapore', status: 'Pending' },
+    { id: 44, name: 'Infinite Creations', category: 'Art & Design', location: 'Paris, France', status: 'Pending' },
+    { id: 45, name: 'NextGen Robotics', category: 'Robotics', location: 'Tokyo, Japan', status: 'Pending' },
+    { id: 46, name: 'MediCare Pro', category: 'Health', location: 'Sydney, Australia', status: 'Pending' },
+    { id: 47, name: 'Clean Living Products', category: 'Home Goods', location: 'Amsterdam, Netherlands', status: 'Pending' },
+    { id: 48, name: 'Vintage Collectibles', category: 'Retail', location: 'Rome, Italy', status: 'Pending' },
+    { id: 49, name: 'Digital Nomad Services', category: 'Travel', location: 'Bangkok, Thailand', status: 'Pending' },
+    { id: 50, name: 'Precision Agriculture', category: 'Agriculture', location: 'Brasília, Brazil', status: 'Pending' },
+    { id: 51, name: 'CyberSecure Solutions', category: 'IT Security', location: 'Tel Aviv, Israel', status: 'Pending' },
+    { id: 52, name: 'Sustainable Fashion Co.', category: 'Fashion', location: 'Copenhagen, Denmark', status: 'Pending' },
+    { id: 53, name: 'Smart City Innovations', category: 'Urban Planning', location: 'Seoul, South Korea', status: 'Pending' },
+    { id: 54, name: 'Green Building Materials', category: 'Construction', location: 'Dubai, UAE', status: 'Pending' },
+    { id: 55, name: 'Holistic Wellness Center', category: 'Wellness', location: 'Bali, Indonesia', status: 'Pending' },
     { id: 56, name: 'Verified Solutions Ltd', category: 'Consulting', location: 'New York City, NY', status: 'Verified' },
     { id: 57, name: 'Secure Data Systems', category: 'IT Security', location: 'San Jose, CA', status: 'Verified' },
     { id: 58, name: 'Elite Design Agency', category: 'Design', location: 'London, UK', status: 'Verified' },
@@ -57,8 +77,6 @@ function Business({ onViewDetails }) {
     { id: 63, name: 'Craft Brewing Co.', category: 'Brewery', location: 'Denver, CO', status: 'Verified' },
     { id: 64, name: 'Urban Development Group', category: 'Real Estate', location: 'Seattle, WA', status: 'Verified' },
     { id: 65, name: 'Precision Engineering', category: 'Manufacturing', location: 'Detroit, MI', status: 'Verified' },
-
-    // --- 20 NEW Denied Businesses ---
     { id: 66, name: 'Shady Deals Inc.', category: 'Retail', location: 'Gotham City, NY', status: 'Denied' },
     { id: 67, name: 'Bad Ideas Co.', category: 'Innovation', location: 'Springfield, IL', status: 'Denied' },
     { id: 68, name: 'Questionable Services', category: 'Consulting', location: 'Metropolis, CA', status: 'Denied' },
@@ -79,391 +97,65 @@ function Business({ onViewDetails }) {
     { id: 83, name: 'Unsafe Driving School', category: 'Education', location: 'Atlanta, GA', status: 'Denied' },
     { id: 84, name: 'Broken Promises Legal', category: 'Legal', location: 'Portland, OR', status: 'Denied' },
     { id: 85, name: 'Expired Licenses Agency', category: 'Licensing', location: 'Las Vegas, NV', status: 'Denied' },
-  ];
+  ]);
 
-  // Calculate counts for each status
-  const statusCounts = {
-    Pending: businesses.filter(b => b.status === 'Pending').length,
-    Verified: businesses.filter(b => b.status === 'Verified').length,
-    Denied: businesses.filter(b => b.status === 'Denied').length,
+  // Function to update a business's status
+  const updateBusinessStatus = (id, newStatus) => {
+    setBusinesses(prevBusinesses =>
+      prevBusinesses.map(business =>
+        business.id === id ? { ...business, status: newStatus } : business
+      )
+    );
   };
 
-  // Filter businesses based on search and status
-  const allFilteredBusinesses = businesses.filter(business => {
-    const matchesSearch = business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          business.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = business.status === activeStatusFilter;
-    return matchesSearch && matchesFilter;
-  });
-
-  // Calculate pagination
-  const totalPages = Math.ceil(allFilteredBusinesses.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentBusinesses = allFilteredBusinesses.slice(startIndex, endIndex);
-
-  const handleStatusClick = (status) => {
-    setActiveStatusFilter(status);
-    setFilterStatus(status);
-    setCurrentPage(1); // Reset to first page when changing status
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+  // A function to render the appropriate component based on activeMenuItem and selectedBusinessId
+  const renderContent = () => {
+    switch (activeMenuItem) {
+      case "Home":
+        return <Home />;
+      case "Business":
+        // If a business is selected, show BusinessInfo, otherwise show the Business list
+        if (selectedBusinessId) {
+          return (
+            <BusinessInfo
+              businessId={selectedBusinessId}
+              onBack={() => setSelectedBusinessId(null)}
+              updateBusinessStatus={updateBusinessStatus} // Pass the update function
+            />
+          );
+        } else {
+          return (
+            <Business
+              businesses={businesses} // Pass the centralized businesses data
+              onViewDetails={setSelectedBusinessId}
+            />
+          );
+        }
+      case "Ambassadors":
+        return <Ambassador />;
+      default:
+        return <Home />; // Fallback to Home
     }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Active': return '#22C55E';
-      case 'Pending': return '#F59E0B';
-      case 'Inactive': return '#EF4444';
-      case 'Verified': return '#22C55E';
-      case 'Denied': return '#EF4444';
-      default: return '#6B7280';
-    }
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-
-    if (totalPages === 0) {
-      return [];
-    } else if (totalPages === 1) {
-      return [1];
-    } else if (totalPages === 2) {
-      return [1, 2];
-    } else { // totalPages > 2
-      if (currentPage === totalPages) {
-        // If on the last page, show the last two pages
-        pages.push(totalPages - 1, totalPages);
-      } else {
-        // For any other page (1 or middle pages), show the current page and the next page
-        pages.push(currentPage, currentPage + 1);
-      }
-    }
-    return pages;
   };
 
   return (
     <div
       style={{
-        padding: "30px",
+        display: "flex",
+        height: "100vh",
+        width: "100%",
         backgroundColor: "#f8f9fa",
-        flexGrow: 1,
-        height: "100%",
-        overflowY: "auto",
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        overflow: "hidden",
       }}
     >
-      <h1
-        style={{
-          fontSize: "28px",
-          fontWeight: "700",
-          color: "#333",
-          marginBottom: "20px",
-        }}
-      >
-        Businesses
-      </h1>
+      {/* Sidebar */}
+      <Sidebar activeMenuItem={activeMenuItem} setActiveMenuItem={setActiveMenuItem} />
 
-      {/* Status Bar */}
-      <div
-        style={{
-          display: "flex",
-          gap: "24px",
-          marginBottom: "30px",
-          alignItems: "center",
-          padding: "16px 24px",
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
-          border: "1px solid #f0f0f0",
-        }}
-      >
-        {[
-          { label: "Pending", count: statusCounts.Pending, color: "#f59e0b" },
-          { label: "Verified", count: statusCounts.Verified, color: "#22c55e" },
-          { label: "Denied", count: statusCounts.Denied, color: "#ef4444" },
-        ].map((status, index) => (
-          <div
-            key={index}
-            onClick={() => handleStatusClick(status.label)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 12px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              backgroundColor: activeStatusFilter === status.label ? "#e8f0fe" : "transparent",
-              transition: "background-color 0.2s",
-              border: activeStatusFilter === status.label ? `1px solid ${status.color}40` : "1px solid transparent",
-            }}
-            onMouseEnter={(e) => {
-              if (activeStatusFilter !== status.label) {
-                e.currentTarget.style.backgroundColor = "#f3f4f6";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeStatusFilter !== status.label) {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }
-            }}
-          >
-            <div
-              style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                backgroundColor: status.color,
-              }}
-            />
-            <span
-              style={{
-                fontSize: "14px",
-                color: activeStatusFilter === status.label ? status.color : "#374151",
-                fontWeight: activeStatusFilter === status.label ? "700" : "500",
-              }}
-            >
-              {status.label} ({status.count})
-            </span>
-          </div>
-        ))}
-
-        {/* Search Input */}
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
-            <input
-                type="text"
-                placeholder="Search businesses..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                style={{
-                    padding: "10px 14px",
-                    borderRadius: "8px",
-                    border: "1px solid #d1d5db",
-                    fontSize: "14px",
-                    width: "250px",
-                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.05)",
-                    outline: "none",
-                    transition: "border-color 0.2s, box-shadow 0.2s",
-                }}
-                onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "#96105E";
-                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(150,16,94,0.1)";
-                }}
-                onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "#d1d5db";
-                    e.currentTarget.style.boxShadow = "inset 0 1px 2px rgba(0,0,0,0.05)";
-                }}
-            />
-        </div>
-      </div>
-
-      {/* Table */}
-      <div
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          padding: "16px",
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
-          border: "1px solid #f0f0f0",
-        }}
-      >
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 8px" }}>
-            <thead style={{backgroundColor: "#F9F9F9", borderRadius: "8px"}}>
-              <tr>
-                <th style={{ padding: "16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em",  borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px" }}>
-                  Business Name
-                </th>
-                <th style={{ padding: "16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Categories
-                </th>
-                <th style={{ padding: "16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Location
-                </th>
-                <th style={{ padding: "16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em", borderTopRightRadius: "8px", borderBottomRightRadius: "8px" }}>
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentBusinesses.map((business) => (
-                <tr
-                  key={business.id}
-                  onClick={() => onViewDetails(business.id)} // Add onClick to view details
-                  style={{
-                    backgroundColor: "#fff",
-                    transition: "all 0.2s",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                    cursor: 'pointer', // Indicate it's clickable
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#f9fafb";
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#fff";
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05)";
-                  }}
-                >
-                  <td style={{
-                    padding: "12px",
-                    borderTopLeftRadius: "8px",
-                    borderBottomLeftRadius: "8px",
-                    border: "1px solid #e5e7eb",
-                    borderRight: "none"
-                  }}>
-                    <div>
-                      <div style={{ fontWeight: "600", color: "#1f2937", fontSize: "14px" }}>
-                        {business.name}
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{
-                    padding: "12px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "#1f2937",
-                    border: "1px solid #e5e7eb",
-                    borderRight: "none",
-                    borderLeft: "none"
-                  }}>
-                    {business.category}
-                  </td>
-                  <td style={{
-                    padding: "12px",
-                    fontSize: "14px",
-                    color: "#1f2937",
-                    border: "1px solid #e5e7eb",
-                    borderRight: "none",
-                    borderLeft: "none"
-                  }}>
-                    {business.location}
-                  </td>
-                  <td style={{
-                    padding: "12px",
-                    borderTopRightRadius: "8px",
-                    borderBottomRightRadius: "8px",
-                    border: "1px solid #e5e7eb",
-                    borderLeft: "none"
-                  }}>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        padding: "4px 12px",
-                        borderRadius: "20px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        backgroundColor: `${getStatusColor(business.status)}15`,
-                        color: getStatusColor(business.status),
-                      }}
-                    >
-                      {business.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {currentBusinesses.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '20px', color: '#6b7280', fontSize: '16px' }}>
-              No businesses found for the selected filter and search term.
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: "20px",
-          padding: "0 4px",
-        }}
-      >
-        <p style={{ fontSize: "14px", color: "#6b7280" }}>
-          Showing {startIndex + 1}-{Math.min(endIndex, allFilteredBusinesses.length)} of {allFilteredBusinesses.length} businesses
-        </p>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "1px solid #d1d5db",
-              backgroundColor: currentPage === 1 ? "#f9fafb" : "#fff",
-              fontSize: "14px",
-              color: currentPage === 1 ? "#9ca3af" : "#374151",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            Previous
-          </button>
-
-          {/* Page Numbers - Dynamically shows 2 pages */}
-          {getPageNumbers().map((pageNumber) => (
-            <button
-              key={pageNumber}
-              onClick={() => handlePageClick(pageNumber)}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "6px",
-                border: currentPage === pageNumber ? "1px solid #96105E" : "1px solid #d1d5db",
-                backgroundColor: currentPage === pageNumber ? "#96105E" : "#fff",
-                fontSize: "14px",
-                color: currentPage === pageNumber ? "#fff" : "#374151",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                minWidth: "40px",
-              }}
-            >
-              {pageNumber}
-            </button>
-          ))}
-
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "1px solid #d1d5db",
-              backgroundColor: currentPage === totalPages ? "#f9fafb" : "#fff",
-              fontSize: "14px",
-              color: currentPage === totalPages ? "#9ca3af" : "#374151",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      {/* Main Content Area - now dynamically rendered */}
+      {renderContent()}
     </div>
   );
 }
 
-export default Business;
+export default Dashboard;

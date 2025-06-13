@@ -1,203 +1,185 @@
 // src/components/BusinessInfo.jsx
 import { useEffect, useState } from 'react';
 
-function BusinessInfo({ businessId, onBack }) {
+// Accept updateBusinessStatus prop
+function BusinessInfo({ businessId, onBack, updateBusinessStatus }) {
   const [activeTab, setActiveTab] = useState('personal'); // 'personal', 'business', 'product'
   const [businessData, setBusinessData] = useState(null);
 
-  // Mock detailed business data (this would typically come from an API call)
-  const mockDetailedBusinesses = {
-    1: {
-      id: 1,
-      name: 'TechCorp Solutions',
-      status: 'Pending',
-      personal: {
-        fullName: 'John Doe',
-        username: 'johndoe_tech',
-        email: 'john.doe@techcorp.com',
-        dateOfBirth: '10/26/1988',
-        gender: 'Male',
-        ssn: 'XXX-XX-6789',
-        governmentId: 'Keya_Shah.pdf',
-        residentialAddress: {
-          addressLine1: '123 Tech Avenue',
-          addressLine2: 'Suite 100',
-          city: 'New York City',
-          state: 'NY',
-          country: 'United States',
-          zipPostalCode: '10001',
-        },
+  // Helper function to generate dummy address
+  const generateAddress = (id) => ({
+    addressLine1: `${id * 10} Main St`,
+    addressLine2: id % 3 === 0 ? `Apt ${id}` : '',
+    city: id % 2 === 0 ? 'Springfield' : 'Riverdale',
+    state: 'IL',
+    country: 'United States',
+    zipPostalCode: `600${10 + id}`,
+  });
+
+  // Comprehensive list of businesses from Business.jsx for detailed info generation
+  const businessesList = [
+    { id: 1, name: 'TechCorp Solutions', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
+    { id: 2, name: 'Green Energy Co.', category: 'Beauty', location: 'New York City, NY', status: 'Verified' },
+    { id: 3, name: 'Digital Marketing Pro', category: 'Health', location: 'New York City, NY', status: 'Pending' },
+    { id: 4, name: 'Fashion Forward LLC', category: 'Sports', location: 'New York City, NY', status: 'Denied' },
+    { id: 5, name: 'HealthTech Innovations', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
+    { id: 6, name: 'Eco Solutions Inc.', category: 'Environment', location: 'San Francisco, CA', status: 'Pending' },
+    { id: 7, name: 'Smart Tech Ltd.', category: 'Technology', location: 'Seattle, WA', status: 'Pending' },
+    { id: 8, name: 'Beauty Brands Co.', category: 'Beauty', location: 'Los Angeles, CA', status: 'Verified' },
+    { id: 9, name: 'Global Connect', category: 'Networking', location: 'Chicago, IL', status: 'Pending' },
+    { id: 10, name: 'Creative Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Verified' },
+    { id: 11, name: 'Foodie Express', category: 'Food & Beverage', location: 'Houston, TX', status: 'Pending' },
+    { id: 12, name: 'Fitness First', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
+    { id: 13, name: 'Edu Solutions', category: 'Education', location: 'Boston, MA', status: 'Pending' },
+    { id: 14, name: 'Home Comforts', category: 'Home Goods', location: 'Portland, OR', status: 'Verified' },
+    { id: 15, name: 'Travel Adventures', category: 'Travel', location: 'Orlando, FL', status: 'Pending' },
+    { id: 16, name: 'Auto Innovations', category: 'Automotive', location: 'Detroit, MI', status: 'Verified' },
+    { id: 17, name: 'Pet Paradise', category: 'Pet Supplies', location: 'Austin, TX', status: 'Pending' },
+    { id: 18, name: 'Music Makers', category: 'Entertainment', location: 'Nashville, TN', status: 'Denied' },
+    { id: 19, name: 'Construction Pros', category: 'Construction', location: 'Phoenix, AZ', status: 'Pending' },
+    { id: 20, name: 'Data Insights', category: 'Technology', location: 'San Jose, CA', status: 'Verified' },
+    { id: 21, name: 'Garden Guru', category: 'Home & Garden', location: 'Raleigh, NC', status: 'Pending' },
+    { id: 22, name: 'Finance Hub', category: 'Finance', location: 'Charlotte, NC', status: 'Verified' },
+    { id: 23, name: 'Legal Assist', category: 'Legal', location: 'Washington, D.C.', status: 'Pending' },
+    { id: 24, name: 'Event Planners', category: 'Events', location: 'Las Vegas, NV', status: 'Denied' },
+    { id: 25, name: 'Security Solutions', category: 'Security', location: 'San Antonio, TX', status: 'Pending' },
+    { id: 26, name: 'Future Innovations', category: 'Technology', location: 'New York City, NY', status: 'Pending' },
+    { id: 27, name: 'Urban Greens', category: 'Agriculture', location: 'San Francisco, CA', status: 'Pending' },
+    { id: 28, name: 'Artisan Crafts Co.', category: 'Arts & Crafts', location: 'Portland, OR', status: 'Pending' },
+    { id: 29, name: 'Mindful Living', category: 'Wellness', location: 'Boulder, CO', status: 'Pending' },
+    { id: 30, name: 'Code Academy', category: 'Education', location: 'Seattle, WA', status: 'Pending' },
+    { id: 31, name: 'Local Eats Hub', category: 'Food & Dining', location: 'Chicago, IL', status: 'Pending' },
+    { id: 32, name: 'Green Thumb Gardens', category: 'Landscaping', location: 'Austin, TX', status: 'Pending' },
+    { id: 33, name: 'Digital Creators', category: 'Marketing', location: 'Los Angeles, CA', status: 'Pending' },
+    { id: 34, name: 'Eco-Friendly Cleaners', category: 'Cleaning Services', location: 'Miami, FL', status: 'Pending' },
+    { id: 35, name: 'Adventure Gear Co.', category: 'Outdoor Sports', location: 'Denver, CO', status: 'Pending' },
+    { id: 36, name: 'Pioneer Ventures', category: 'Investment', location: 'San Diego, CA', status: 'Pending' },
+    { id: 37, name: 'Quantum Analytics', category: 'Technology', location: 'Boston, MA', status: 'Pending' },
+    { id: 38, name: 'Zenith Innovations', category: 'Technology', location: 'Dublin, Ireland', status: 'Pending' },
+    { id: 39, name: 'Oceanic Foods', category: 'Food & Beverage', location: 'Vancouver, Canada', status: 'Pending' },
+    { id: 40, name: 'Summit Sports', category: 'Sports', location: 'Salt Lake City, UT', status: 'Pending' },
+    { id: 41, name: 'Bright Future Education', category: 'Education', location: 'London, UK', status: 'Pending' },
+    { id: 42, name: 'Urban Craft Brewery', category: 'Food & Beverage', location: 'Berlin, Germany', status: 'Pending' },
+    { id: 43, name: 'Global Logistics Solutions', category: 'Logistics', location: 'Singapore', status: 'Pending' },
+    { id: 44, name: 'Infinite Creations', category: 'Art & Design', location: 'Paris, France', status: 'Pending' },
+    { id: 45, name: 'NextGen Robotics', category: 'Robotics', location: 'Tokyo, Japan', status: 'Pending' },
+    { id: 46, name: 'MediCare Pro', category: 'Health', location: 'Sydney, Australia', status: 'Pending' },
+    { id: 47, name: 'Clean Living Products', category: 'Home Goods', location: 'Amsterdam, Netherlands', status: 'Pending' },
+    { id: 48, name: 'Vintage Collectibles', category: 'Retail', location: 'Rome, Italy', status: 'Pending' },
+    { id: 49, name: 'Digital Nomad Services', category: 'Travel', location: 'Bangkok, Thailand', status: 'Pending' },
+    { id: 50, name: 'Precision Agriculture', category: 'Agriculture', location: 'Brasília, Brazil', status: 'Pending' },
+    { id: 51, name: 'CyberSecure Solutions', category: 'IT Security', location: 'Tel Aviv, Israel', status: 'Pending' },
+    { id: 52, name: 'Sustainable Fashion Co.', category: 'Fashion', location: 'Copenhagen, Denmark', status: 'Pending' },
+    { id: 53, name: 'Smart City Innovations', category: 'Urban Planning', location: 'Seoul, South Korea', status: 'Pending' },
+    { id: 54, name: 'Green Building Materials', category: 'Construction', location: 'Dubai, UAE', status: 'Pending' },
+    { id: 55, name: 'Holistic Wellness Center', category: 'Wellness', location: 'Bali, Indonesia', status: 'Pending' },
+    { id: 56, name: 'Verified Solutions Ltd', category: 'Consulting', location: 'New York City, NY', status: 'Verified' },
+    { id: 57, name: 'Secure Data Systems', category: 'IT Security', location: 'San Jose, CA', status: 'Verified' },
+    { id: 58, name: 'Elite Design Agency', category: 'Design', location: 'London, UK', status: 'Verified' },
+    { id: 59, name: 'Premium Auto Care', category: 'Automotive', location: 'Chicago, IL', status: 'Verified' },
+    { id: 60, name: 'Reliable Accounting', category: 'Finance', location: 'Houston, TX', status: 'Verified' },
+    { id: 61, name: 'Global Trade Hub', category: 'Import/Export', location: 'Los Angeles, CA', status: 'Verified' },
+    { id: 62, name: 'Fresh Produce Market', category: 'Food & Beverage', location: 'Miami, FL', status: 'Verified' },
+    { id: 63, name: 'Craft Brewing Co.', category: 'Brewery', location: 'Denver, CO', status: 'Verified' },
+    { id: 64, name: 'Urban Development Group', category: 'Real Estate', location: 'Seattle, WA', status: 'Verified' },
+    { id: 65, name: 'Precision Engineering', category: 'Manufacturing', location: 'Detroit, MI', status: 'Verified' },
+    { id: 66, name: 'Shady Deals Inc.', category: 'Retail', location: 'Gotham City, NY', status: 'Denied' },
+    { id: 67, name: 'Bad Ideas Co.', category: 'Innovation', location: 'Springfield, IL', status: 'Denied' },
+    { id: 68, name: 'Questionable Services', category: 'Consulting', location: 'Metropolis, CA', status: 'Denied' },
+    { id: 69, name: 'Fake News Network', category: 'Media', location: 'Washington, D.C.', status: 'Denied' },
+    { id: 70, name: 'Broken Gadgets Repair', category: 'Electronics', location: 'Seattle, WA', status: 'Denied' },
+    { id: 71, name: 'Risky Investments', category: 'Finance', location: 'New York City, NY', status: 'Denied' },
+    { id: 72, name: 'Toxic Waste Disposal', category: 'Environment', location: 'Houston, TX', status: 'Denied' },
+    { id: 73, name: 'Unlicensed Practice', category: 'Health', location: 'Los Angeles, CA', status: 'Denied' },
+    { id: 74, name: 'Dubious Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Denied' },
+    { id: 75, name: 'Expired Goods Store', category: 'Food & Beverage', location: 'Chicago, IL', status: 'Denied' },
+    { id: 76, name: 'No-Show Movers', category: 'Logistics', location: 'Dallas, TX', status: 'Denied' },
+    { id: 77, name: 'Faulty Construction LLC', category: 'Construction', location: 'Phoenix, AZ', status: 'Denied' },
+    { id: 78, name: 'Unethical Marketing', category: 'Marketing', location: 'Boston, MA', status: 'Denied' },
+    { id: 79, name: 'Pirate Software Inc.', category: 'Software', location: 'San Francisco, CA', status: 'Denied' },
+    { id: 80, name: 'Ghost Tours Co.', category: 'Tourism', location: 'New Orleans, LA', status: 'Denied' },
+    { id: 81, name: 'Slippery Slope Sports', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
+    { id: 82, name: 'Obsolete Tech Revival', category: 'Technology', location: 'Raleigh, NC', status: 'Denied' },
+    { id: 83, name: 'Unsafe Driving School', category: 'Education', location: 'Atlanta, GA', status: 'Denied' },
+    { id: 84, name: 'Broken Promises Legal', category: 'Legal', location: 'Portland, OR', status: 'Denied' },
+    { id: 85, name: 'Expired Licenses Agency', category: 'Licensing', location: 'Las Vegas, NV', status: 'Denied' },
+  ];
+
+  const mockDetailedBusinesses = {};
+
+  // Populate mockDetailedBusinesses using the provided businessesList
+  businessesList.forEach(business => {
+    const { id, name, status, category, location } = business;
+
+    // Generate dummy data for other fields
+    const personalData = {
+      fullName: `Applicant Name for ${name}`,
+      username: `${name.replace(/\s/g, '').toLowerCase()}_user`,
+      email: `${name.replace(/\s/g, '').toLowerCase()}@example.com`,
+      dateOfBirth: `01/01/${1980 + (id % 20)}`,
+      gender: id % 2 === 0 ? 'Male' : 'Female',
+      ssn: `XXX-XX-${1000 + id}`,
+      governmentId: 'Keya_Shah.pdf',
+      residentialAddress: generateAddress(id),
+    };
+
+    const businessDetails = {
+      categories: category,
+      registeredBusinessName: `${name} Inc.`,
+      dbaInfo: id % 2 === 0 ? `DBA ${name}` : 'N/A',
+      tradeName: `Trade${name}`,
+      dbaTradeDocuments: 'Keya_Shah.pdf',
+      businessContact: {
+        email: `contact@${name.replace(/\s/g, '').toLowerCase()}.com`,
+        phone: `(555) 123-${1000 + id}`,
       },
-      business: {
-        categories: 'Technology, Software',
-        registeredBusinessName: 'TechCorp Solutions Inc.',
-        dbaInfo: 'N/A', // DBA (Doing Business As) or an official name change
-        tradeName: 'TechCorp',
-        dbaTradeDocuments: 'Keya_Shah.pdf',
-        businessContact: {
-          email: 'info@techcorp.com',
-          phone: '(123) 456-7890',
-        },
-        businessAddress: {
-          isSameAsResidential: true,
-          addressLine1: '123 Tech Avenue',
-          addressLine2: 'Suite 100',
-          city: 'New York City',
-          state: 'NY',
-          country: 'United States',
-          zipPostalCode: '10001',
-        },
-        businessWebsite: 'www.techcorp.com',
-        isRegisteredBusiness: 'Yes',
-        employerIdNumber: '12-3456789',
-        manufacturerCountry: 'United States',
-        brandLaunchYear: '2015',
-        socialMedia: 'link_to_social_media_profiles',
+      businessAddress: {
+        isSameAsResidential: id % 3 === 0,
+        addressLine1: `${id * 100} Commerce Dr`,
+        addressLine2: id % 4 === 0 ? `Suite ${id}` : '',
+        city: location.split(',')[0].trim(),
+        state: location.split(',')[1]?.trim() || 'NY',
+        country: 'United States',
+        zipPostalCode: `9021${id % 10}`,
       },
-      product: {
-        ingredientTransparencyDocument: 'Keya_Shah.pdf',
-        packagingSustainabilityDocument: 'Keya_Shah.pdf',
-        allowedEverywhere: 'Yes',
-        restrictedCountries: 'N/A',
-        brandPromotionalPlan: 'Type plan here...',
-        productDescription: 'Description here...',
-        productUniqueSellingPoint: 'Text about unique selling point...',
-        productVideoPhoto: [
-          'Keya_Shah.pdf',
-          'Keya_Shah.pdf', // Added second Keya_Shah.pdf
-        ],
-        complianceQAUpload: 'Keya_Shah.pdf',
-      },
-    },
-    2: {
-        id: 2,
-        name: 'Green Energy Co.',
-        status: 'Verified',
-        personal: {
-            fullName: 'Jane Doe',
-            username: 'janedoe_energy',
-            email: 'jane.doe@greenenergy.com',
-            dateOfBirth: '05/15/1990',
-            gender: 'Female',
-            ssn: 'XXX-XX-1234',
-            governmentId: 'Keya_Shah.pdf',
-            residentialAddress: {
-                addressLine1: '456 Eco Blvd',
-                addressLine2: '',
-                city: 'New York City',
-                state: 'NY',
-                country: 'United States',
-                zipPostalCode: '10002',
-            },
-        },
-        business: {
-            categories: 'Renewable Energy, Sustainability',
-            registeredBusinessName: 'Green Energy Company LLC',
-            dbaInfo: 'GreenPower',
-            tradeName: 'EcoSolutions',
-            dbaTradeDocuments: 'Keya_Shah.pdf',
-            businessContact: {
-                email: 'contact@greenenergy.com',
-                phone: '(987) 654-3210',
-            },
-            businessAddress: {
-                isSameAsResidential: false,
-                addressLine1: '789 Solar Way',
-                addressLine2: 'Unit B',
-                city: 'San Francisco',
-                state: 'CA',
-                country: 'United States',
-                zipPostalCode: '94103',
-            },
-            businessWebsite: 'www.greenenergyco.com',
-            isRegisteredBusiness: 'Yes',
-            employerIdNumber: '98-7654321',
-            manufacturerCountry: 'United States',
-            brandLaunchYear: '2010',
-            socialMedia: 'link_to_green_energy_socials',
-        },
-        product: {
-            ingredientTransparencyDocument: 'Keya_Shah.pdf',
-            packagingSustainabilityDocument: 'Keya_Shah.pdf',
-            allowedEverywhere: 'Yes',
-            restrictedCountries: 'N/A',
-            brandPromotionalPlan: 'Promotional plan for eco-friendly products...',
-            productDescription: 'Sustainable energy solutions for homes and businesses.',
-            productUniqueSellingPoint: '100% clean energy, zero carbon footprint.',
-            productVideoPhoto: [
-                'Keya_Shah.pdf',
-                'Keya_Shah.pdf', // Added second Keya_Shah.pdf
-            ],
-            complianceQAUpload: 'Keya_Shah.pdf',
-        },
-    },
-     3: {
-      id: 3,
-      name: 'Digital Marketing Pro',
-      status: 'Pending',
-      personal: {
-        fullName: 'Alice Smith',
-        username: 'alice_digital',
-        email: 'alice.smith@digitalpro.com',
-        dateOfBirth: '01/01/1995',
-        gender: 'Female',
-        ssn: 'XXX-XX-9876',
-        governmentId: 'Keya_Shah.pdf',
-        residentialAddress: {
-          addressLine1: '321 Marketing Rd',
-          addressLine2: 'Apt 5A',
-          city: 'New York City',
-          state: 'NY',
-          country: 'United States',
-          zipPostalCode: '10003',
-        },
-      },
-      business: {
-        categories: 'Marketing, Digital Marketing, SEO',
-        registeredBusinessName: 'Digital Marketing Pro LLC',
-        dbaInfo: 'DigitalPro',
-        tradeName: 'DigitalPro Marketing',
-        dbaTradeDocuments: 'Keya_Shah.pdf',
-        businessContact: {
-          email: 'contact@digitalmarketingpro.com',
-          phone: '(555) 123-4567',
-        },
-        businessAddress: {
-          isSameAsResidential: true,
-          addressLine1: '321 Marketing Rd',
-          addressLine2: 'Apt 5A',
-          city: 'New York City',
-          state: 'NY',
-          country: 'United States',
-          zipPostalCode: '10003',
-        },
-        businessWebsite: 'www.digitalmarketingpro.com',
-        isRegisteredBusiness: 'Yes',
-        employerIdNumber: '11-2233445',
-        manufacturerCountry: 'N/A',
-        brandLaunchYear: '2018',
-        socialMedia: 'link_to_digitalpro_socials',
-      },
-      product: {
-        ingredientTransparencyDocument: 'Keya_Shah.pdf',
-        packagingSustainabilityDocument: 'Keya_Shah.pdf',
-        allowedEverywhere: 'Yes',
-        restrictedCountries: 'N/A',
-        brandPromotionalPlan: 'Detailed digital marketing strategies for clients.',
-        productDescription: 'Offers comprehensive digital marketing services including SEO, SEM, social media, and content marketing.',
-        productUniqueSellingPoint: 'Data-driven strategies with proven ROI for clients.',
-        productVideoPhoto: [
-            'Keya_Shah.pdf',
-            'Keya_Shah.pdf', // Added second Keya_Shah.pdf
-        ],
-        complianceQAUpload: 'Keya_Shah.pdf',
-      },
-    },
-  };
+      businessWebsite: `www.${name.replace(/\s/g, '').toLowerCase()}.com`,
+      isRegisteredBusiness: 'Yes',
+      employerIdNumber: `${10 + id}-${2000000 + id}`,
+      manufacturerCountry: id % 2 === 0 ? 'United States' : 'Canada',
+      brandLaunchYear: `${2000 + (id % 20)}`,
+      socialMedia: `link_to_${name.replace(/\s/g, '_').toLowerCase()}_socials`,
+    };
+
+    const productDetails = {
+      ingredientTransparencyDocument: 'Keya_Shah.pdf',
+      packagingSustainabilityDocument: 'Keya_Shah.pdf',
+      allowedEverywhere: 'Yes',
+      restrictedCountries: id % 5 === 0 ? 'China, Russia' : 'N/A',
+      brandPromotionalPlan: `Promotional plan for ${name}'s products.`,
+      productDescription: `Detailed description of products offered by ${name}.`,
+      productUniqueSellingPoint: `Unique selling point for ${name}: innovation and quality.`,
+      productVideoPhoto: [
+        'Keya_Shah.pdf',
+        'Keya_Shah.pdf',
+      ],
+      complianceQAUpload: 'Keya_Shah.pdf',
+    };
+
+    mockDetailedBusinesses[id] = {
+      id,
+      name,
+      status,
+      personal: personalData,
+      business: businessDetails,
+      product: productDetails,
+    };
+  });
 
 
   useEffect(() => {
-    const data = mockDetailedBusinesses[businessId] || mockDetailedBusinesses[1];
+    // In a real application, you'd fetch this data from an API
+    // For this example, we're using mock data
+    const data = mockDetailedBusinesses[businessId];
     setBusinessData(data);
   }, [businessId]);
 
@@ -209,6 +191,18 @@ function BusinessInfo({ businessId, onBack }) {
       case 'Verified': return '#22C55E';
       case 'Denied': return '#EF4444';
       default: return '#6B7280';
+    }
+  };
+
+  const handleVerify = () => {
+    if (businessData) {
+      updateBusinessStatus(businessData.id, 'Verified');
+    }
+  };
+
+  const handleDeny = () => {
+    if (businessData) {
+      updateBusinessStatus(businessData.id, 'Denied');
     }
   };
 
@@ -399,6 +393,7 @@ function BusinessInfo({ businessId, onBack }) {
         </div>
         <div style={{ display: 'flex', gap: '15px' }}>
           <button
+            onClick={handleVerify}
             style={{
               padding: '10px 20px',
               borderRadius: '8px',
@@ -414,6 +409,7 @@ function BusinessInfo({ businessId, onBack }) {
             Verify
           </button>
           <button
+            onClick={handleDeny}
             style={{
               padding: '10px 20px',
               borderRadius: '8px',
@@ -458,7 +454,7 @@ function BusinessInfo({ businessId, onBack }) {
                 transition: 'all 0.2s',
                 textTransform: 'capitalize',
                 outline: 'none',
-                flexShrink: 0, // Prevent shrinking
+                flexShrink: 0,
               }}
             >
               {tab} Information
