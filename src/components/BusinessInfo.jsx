@@ -1,8 +1,8 @@
 // src/components/BusinessInfo.jsx
 import { useEffect, useState } from 'react';
 
-// Accept updateBusinessStatus prop
-function BusinessInfo({ businessId, onBack, updateBusinessStatus }) {
+// Accept businessId and onBack prop (removed updateBusinessStatus)
+function BusinessInfo({ businessId, onBack }) {
   const [activeTab, setActiveTab] = useState('personal'); // 'personal', 'business', 'product'
   const [businessData, setBusinessData] = useState(null);
 
@@ -16,301 +16,271 @@ function BusinessInfo({ businessId, onBack, updateBusinessStatus }) {
     zipPostalCode: `600${10 + id}`,
   });
 
-  // Comprehensive list of businesses from Business.jsx for detailed info generation
-  const businessesList = [
-    { id: 1, name: 'TechCorp Solutions', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
-    { id: 2, name: 'Green Energy Co.', category: 'Beauty', location: 'New York City, NY', status: 'Verified' },
-    { id: 3, name: 'Digital Marketing Pro', category: 'Health', location: 'New York City, NY', status: 'Pending' },
-    { id: 4, name: 'Fashion Forward LLC', category: 'Sports', location: 'New York City, NY', status: 'Denied' },
-    { id: 5, name: 'HealthTech Innovations', category: 'Fashion', location: 'New York City, NY', status: 'Pending' },
-    { id: 6, name: 'Eco Solutions Inc.', category: 'Environment', location: 'San Francisco, CA', status: 'Pending' },
-    { id: 7, name: 'Smart Tech Ltd.', category: 'Technology', location: 'Seattle, WA', status: 'Pending' },
-    { id: 8, name: 'Beauty Brands Co.', category: 'Beauty', location: 'Los Angeles, CA', status: 'Verified' },
-    { id: 9, name: 'Global Connect', category: 'Networking', location: 'Chicago, IL', status: 'Pending' },
-    { id: 10, name: 'Creative Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Verified' },
-    { id: 11, name: 'Foodie Express', category: 'Food & Beverage', location: 'Houston, TX', status: 'Pending' },
-    { id: 12, name: 'Fitness First', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
-    { id: 13, name: 'Edu Solutions', category: 'Education', location: 'Boston, MA', status: 'Pending' },
-    { id: 14, name: 'Home Comforts', category: 'Home Goods', location: 'Portland, OR', status: 'Verified' },
-    { id: 15, name: 'Travel Adventures', category: 'Travel', location: 'Orlando, FL', status: 'Pending' },
-    { id: 16, name: 'Auto Innovations', category: 'Automotive', location: 'Detroit, MI', status: 'Verified' },
-    { id: 17, name: 'Pet Paradise', category: 'Pet Supplies', location: 'Austin, TX', status: 'Pending' },
-    { id: 18, name: 'Music Makers', category: 'Entertainment', location: 'Nashville, TN', status: 'Denied' },
-    { id: 19, name: 'Construction Pros', category: 'Construction', location: 'Phoenix, AZ', status: 'Pending' },
-    { id: 20, name: 'Data Insights', category: 'Technology', location: 'San Jose, CA', status: 'Verified' },
-    { id: 21, name: 'Garden Guru', category: 'Home & Garden', location: 'Raleigh, NC', status: 'Pending' },
-    { id: 22, name: 'Finance Hub', category: 'Finance', location: 'Charlotte, NC', status: 'Verified' },
-    { id: 23, name: 'Legal Assist', category: 'Legal', location: 'Washington, D.C.', status: 'Pending' },
-    { id: 24, name: 'Event Planners', category: 'Events', location: 'Las Vegas, NV', status: 'Denied' },
-    { id: 25, name: 'Security Solutions', category: 'Security', location: 'San Antonio, TX', status: 'Pending' },
-    { id: 26, name: 'Future Innovations', category: 'Technology', location: 'New York City, NY', status: 'Pending' },
-    { id: 27, name: 'Urban Greens', category: 'Agriculture', location: 'San Francisco, CA', status: 'Pending' },
-    { id: 28, name: 'Artisan Crafts Co.', category: 'Arts & Crafts', location: 'Portland, OR', status: 'Pending' },
-    { id: 29, name: 'Mindful Living', category: 'Wellness', location: 'Boulder, CO', status: 'Pending' },
-    { id: 30, name: 'Code Academy', category: 'Education', location: 'Seattle, WA', status: 'Pending' },
-    { id: 31, name: 'Local Eats Hub', category: 'Food & Dining', location: 'Chicago, IL', status: 'Pending' },
-    { id: 32, name: 'Green Thumb Gardens', category: 'Landscaping', location: 'Austin, TX', status: 'Pending' },
-    { id: 33, name: 'Digital Creators', category: 'Marketing', location: 'Los Angeles, CA', status: 'Pending' },
-    { id: 34, name: 'Eco-Friendly Cleaners', category: 'Cleaning Services', location: 'Miami, FL', status: 'Pending' },
-    { id: 35, name: 'Adventure Gear Co.', category: 'Outdoor Sports', location: 'Denver, CO', status: 'Pending' },
-    { id: 36, name: 'Pioneer Ventures', category: 'Investment', location: 'San Diego, CA', status: 'Pending' },
-    { id: 37, name: 'Quantum Analytics', category: 'Technology', location: 'Boston, MA', status: 'Pending' },
-    { id: 38, name: 'Zenith Innovations', category: 'Technology', location: 'Dublin, Ireland', status: 'Pending' },
-    { id: 39, name: 'Oceanic Foods', category: 'Food & Beverage', location: 'Vancouver, Canada', status: 'Pending' },
-    { id: 40, name: 'Summit Sports', category: 'Sports', location: 'Salt Lake City, UT', status: 'Pending' },
-    { id: 41, name: 'Bright Future Education', category: 'Education', location: 'London, UK', status: 'Pending' },
-    { id: 42, name: 'Urban Craft Brewery', category: 'Food & Beverage', location: 'Berlin, Germany', status: 'Pending' },
-    { id: 43, name: 'Global Logistics Solutions', category: 'Logistics', location: 'Singapore', status: 'Pending' },
-    { id: 44, name: 'Infinite Creations', category: 'Art & Design', location: 'Paris, France', status: 'Pending' },
-    { id: 45, name: 'NextGen Robotics', category: 'Robotics', location: 'Tokyo, Japan', status: 'Pending' },
-    { id: 46, name: 'MediCare Pro', category: 'Health', location: 'Sydney, Australia', status: 'Pending' },
-    { id: 47, name: 'Clean Living Products', category: 'Home Goods', location: 'Amsterdam, Netherlands', status: 'Pending' },
-    { id: 48, name: 'Vintage Collectibles', category: 'Retail', location: 'Rome, Italy', status: 'Pending' },
-    { id: 49, name: 'Digital Nomad Services', category: 'Travel', location: 'Bangkok, Thailand', status: 'Pending' },
-    { id: 50, name: 'Precision Agriculture', category: 'Agriculture', location: 'Brasília, Brazil', status: 'Pending' },
-    { id: 51, name: 'CyberSecure Solutions', category: 'IT Security', location: 'Tel Aviv, Israel', status: 'Pending' },
-    { id: 52, name: 'Sustainable Fashion Co.', category: 'Fashion', location: 'Copenhagen, Denmark', status: 'Pending' },
-    { id: 53, name: 'Smart City Innovations', category: 'Urban Planning', location: 'Seoul, South Korea', status: 'Pending' },
-    { id: 54, name: 'Green Building Materials', category: 'Construction', location: 'Dubai, UAE', status: 'Pending' },
-    { id: 55, name: 'Holistic Wellness Center', category: 'Wellness', location: 'Bali, Indonesia', status: 'Pending' },
-    { id: 56, name: 'Verified Solutions Ltd', category: 'Consulting', location: 'New York City, NY', status: 'Verified' },
-    { id: 57, name: 'Secure Data Systems', category: 'IT Security', location: 'San Jose, CA', status: 'Verified' },
-    { id: 58, name: 'Elite Design Agency', category: 'Design', location: 'London, UK', status: 'Verified' },
-    { id: 59, name: 'Premium Auto Care', category: 'Automotive', location: 'Chicago, IL', status: 'Verified' },
-    { id: 60, name: 'Reliable Accounting', category: 'Finance', location: 'Houston, TX', status: 'Verified' },
-    { id: 61, name: 'Global Trade Hub', category: 'Import/Export', location: 'Los Angeles, CA', status: 'Verified' },
-    { id: 62, name: 'Fresh Produce Market', category: 'Food & Beverage', location: 'Miami, FL', status: 'Verified' },
-    { id: 63, name: 'Craft Brewing Co.', category: 'Brewery', location: 'Denver, CO', status: 'Verified' },
-    { id: 64, name: 'Urban Development Group', category: 'Real Estate', location: 'Seattle, WA', status: 'Verified' },
-    { id: 65, name: 'Precision Engineering', category: 'Manufacturing', location: 'Detroit, MI', status: 'Verified' },
-    { id: 66, name: 'Shady Deals Inc.', category: 'Retail', location: 'Gotham City, NY', status: 'Denied' },
-    { id: 67, name: 'Bad Ideas Co.', category: 'Innovation', location: 'Springfield, IL', status: 'Denied' },
-    { id: 68, name: 'Questionable Services', category: 'Consulting', location: 'Metropolis, CA', status: 'Denied' },
-    { id: 69, name: 'Fake News Network', category: 'Media', location: 'Washington, D.C.', status: 'Denied' },
-    { id: 70, name: 'Broken Gadgets Repair', category: 'Electronics', location: 'Seattle, WA', status: 'Denied' },
-    { id: 71, name: 'Risky Investments', category: 'Finance', location: 'New York City, NY', status: 'Denied' },
-    { id: 72, name: 'Toxic Waste Disposal', category: 'Environment', location: 'Houston, TX', status: 'Denied' },
-    { id: 73, name: 'Unlicensed Practice', category: 'Health', location: 'Los Angeles, CA', status: 'Denied' },
-    { id: 74, name: 'Dubious Designs', category: 'Art & Design', location: 'Miami, FL', status: 'Denied' },
-    { id: 75, name: 'Expired Goods Store', category: 'Food & Beverage', location: 'Chicago, IL', status: 'Denied' },
-    { id: 76, name: 'No-Show Movers', category: 'Logistics', location: 'Dallas, TX', status: 'Denied' },
-    { id: 77, name: 'Faulty Construction LLC', category: 'Construction', location: 'Phoenix, AZ', status: 'Denied' },
-    { id: 78, name: 'Unethical Marketing', category: 'Marketing', location: 'Boston, MA', status: 'Denied' },
-    { id: 79, name: 'Pirate Software Inc.', category: 'Software', location: 'San Francisco, CA', status: 'Denied' },
-    { id: 80, name: 'Ghost Tours Co.', category: 'Tourism', location: 'New Orleans, LA', status: 'Denied' },
-    { id: 81, name: 'Slippery Slope Sports', category: 'Sports', location: 'Denver, CO', status: 'Denied' },
-    { id: 82, name: 'Obsolete Tech Revival', category: 'Technology', location: 'Raleigh, NC', status: 'Denied' },
-    { id: 83, name: 'Unsafe Driving School', category: 'Education', location: 'Atlanta, GA', status: 'Denied' },
-    { id: 84, name: 'Broken Promises Legal', category: 'Legal', location: 'Portland, OR', status: 'Denied' },
-    { id: 85, name: 'Expired Licenses Agency', category: 'Licensing', location: 'Las Vegas, NV', status: 'Denied' },
-  ];
-
-  const mockDetailedBusinesses = {};
-
-  // Populate mockDetailedBusinesses using the provided businessesList
-  businessesList.forEach(business => {
-    const { id, name, status, category, location } = business;
-
-    // Generate dummy data for other fields
-    const personalData = {
-      fullName: `Applicant Name for ${name}`,
-      username: `${name.replace(/\s/g, '').toLowerCase()}_user`,
-      email: `${name.replace(/\s/g, '').toLowerCase()}@example.com`,
-      dateOfBirth: `01/01/${1980 + (id % 20)}`,
-      gender: id % 2 === 0 ? 'Male' : 'Female',
-      ssn: `XXX-XX-${1000 + id}`,
-      governmentId: 'Keya_Shah.pdf',
-      residentialAddress: generateAddress(id),
-    };
-
-    const businessDetails = {
-      categories: category,
-      registeredBusinessName: `${name} Inc.`,
-      dbaInfo: id % 2 === 0 ? `DBA ${name}` : 'N/A',
-      tradeName: `Trade${name}`,
-      dbaTradeDocuments: 'Keya_Shah.pdf',
-      businessContact: {
-        email: `contact@${name.replace(/\s/g, '').toLowerCase()}.com`,
-        phone: `(555) 123-${1000 + id}`,
+  // Mock detailed business data (this would typically come from an API call)
+  // This data will be "local" to BusinessInfo.jsx
+  const mockDetailedBusinesses = {
+    1: {
+      id: 1,
+      name: 'TechCorp Solutions',
+      status: 'Pending',
+      personal: {
+        fullName: 'John Doe',
+        username: 'johndoe_tech',
+        email: 'john.doe@techcorp.com',
+        dateOfBirth: '10/26/1988',
+        gender: 'Male',
+        ssn: 'XXX-XX-6789',
+        governmentId: 'Keya_Shah.pdf',
+        residentialAddress: {
+          addressLine1: '123 Tech Avenue',
+          addressLine2: 'Suite 100',
+          city: 'New York City',
+          state: 'NY',
+          country: 'United States',
+          zipPostalCode: '10001',
+        },
       },
-      businessAddress: {
-        isSameAsResidential: id % 3 === 0,
-        addressLine1: `${id * 100} Commerce Dr`,
-        addressLine2: id % 4 === 0 ? `Suite ${id}` : '',
-        city: location.split(',')[0].trim(),
-        state: location.split(',')[1]?.trim() || 'NY',
-        country: 'United States',
-        zipPostalCode: `9021${id % 10}`,
+      business: {
+        categories: 'Technology, Software',
+        registeredBusinessName: 'TechCorp Solutions Inc.',
+        dbaInfo: 'N/A', // DBA (Doing Business As) or an official name change
+        tradeName: 'TechCorp',
+        dbaTradeDocuments: 'Keya_Shah.pdf',
+        businessContact: {
+          email: 'info@techcorp.com',
+          // ... other details
+        },
       },
-      businessWebsite: `www.${name.replace(/\s/g, '').toLowerCase()}.com`,
-      isRegisteredBusiness: 'Yes',
-      employerIdNumber: `${10 + id}-${2000000 + id}`,
-      manufacturerCountry: id % 2 === 0 ? 'United States' : 'Canada',
-      brandLaunchYear: `${2000 + (id % 20)}`,
-      socialMedia: `link_to_${name.replace(/\s/g, '_').toLowerCase()}_socials`,
-    };
-
-    const productDetails = {
-      ingredientTransparencyDocument: 'Keya_Shah.pdf',
-      packagingSustainabilityDocument: 'Keya_Shah.pdf',
-      allowedEverywhere: 'Yes',
-      restrictedCountries: id % 5 === 0 ? 'China, Russia' : 'N/A',
-      brandPromotionalPlan: `Promotional plan for ${name}'s products.`,
-      productDescription: `Detailed description of products offered by ${name}.`,
-      productUniqueSellingPoint: `Unique selling point for ${name}: innovation and quality.`,
-      productVideoPhoto: [
-        'Keya_Shah.pdf',
-        'Keya_Shah.pdf',
-      ],
-      complianceQAUpload: 'Keya_Shah.pdf',
-    };
-
-    mockDetailedBusinesses[id] = {
-      id,
-      name,
-      status,
-      personal: personalData,
-      business: businessDetails,
-      product: productDetails,
-    };
-  });
+      product: {
+        productType: 'Software Development',
+        serviceDescription: 'Offers custom software solutions for enterprises.',
+        pricingModel: 'Per-project or subscription-based',
+        website: 'www.techcorp.com',
+      },
+    },
+    // Add other detailed business data as needed, or generate dynamically
+    2: {
+      id: 2,
+      name: 'Green Energy Co.',
+      status: 'Verified',
+      personal: {
+        fullName: 'Jane Smith',
+        username: 'janesmith_eco',
+        email: 'jane.smith@greenenergy.com',
+        dateOfBirth: '05/15/1990',
+        gender: 'Female',
+        ssn: 'XXX-XX-1234',
+        governmentId: 'Jane_Smith_ID.pdf',
+        residentialAddress: generateAddress(2),
+      },
+      business: {
+        categories: 'Energy, Environment',
+        registeredBusinessName: 'Green Energy Solutions Inc.',
+        dbaInfo: 'Eco Power',
+        tradeName: 'Green Energy',
+        dbaTradeDocuments: 'Green_Energy_DBA.pdf',
+        businessContact: { email: 'contact@greenenergy.com' },
+      },
+      product: {
+        productType: 'Solar Panel Installation',
+        serviceDescription: 'Provides installation and maintenance of residential solar panels.',
+        pricingModel: 'Fixed-price projects',
+        website: 'www.greenenergy.com',
+      },
+    },
+    3: {
+      id: 3,
+      name: 'Digital Marketing Pro',
+      status: 'Pending',
+      personal: {
+        fullName: 'Alice Johnson',
+        username: 'alicej_dm',
+        email: 'alice.johnson@dmpro.com',
+        dateOfBirth: '03/01/1985',
+        gender: 'Female',
+        ssn: 'XXX-XX-5678',
+        governmentId: 'Alice_Johnson_ID.pdf',
+        residentialAddress: generateAddress(3),
+      },
+      business: {
+        categories: 'Marketing, Digital Services',
+        registeredBusinessName: 'Digital Marketing Pros LLC',
+        dbaInfo: 'N/A',
+        tradeName: 'DMPRO',
+        dbaTradeDocuments: 'DMPRO_Docs.pdf',
+        businessContact: { email: 'hello@dmpro.com' },
+      },
+      product: {
+        productType: 'SEO Services',
+        serviceDescription: 'Offers search engine optimization and content marketing services.',
+        pricingModel: 'Monthly retainers',
+        website: 'www.dmpro.com',
+      },
+    },
+    4: {
+      id: 4,
+      name: 'Fashion Forward LLC',
+      status: 'Denied',
+      personal: {
+        fullName: 'Bob Brown',
+        username: 'bobb_fashion',
+        email: 'bob.brown@fashionfwd.com',
+        dateOfBirth: '09/20/1992',
+        gender: 'Male',
+        ssn: 'XXX-XX-9876',
+        governmentId: 'Bob_Brown_ID.pdf',
+        residentialAddress: generateAddress(4),
+      },
+      business: {
+        categories: 'Fashion, Apparel',
+        registeredBusinessName: 'Fashion Forward LLC',
+        dbaInfo: 'Trendy Threads',
+        tradeName: 'Fashion Forward',
+        dbaTradeDocuments: 'FashionFwd_DBA.pdf',
+        businessContact: { email: 'sales@fashionfwd.com' },
+      },
+      product: {
+        productType: 'Online Clothing Retail',
+        serviceDescription: 'E-commerce platform selling contemporary fashion.',
+        pricingModel: 'Per-item sales',
+        website: 'www.fashionfwd.com',
+      },
+    },
+    // Add mock data for other business IDs (5-85)
+    // You can use a loop or similar logic for dummy data for 5-85
+    // For demonstration, I'll add a few more manually, but consider automation for large sets
+    5: {
+        id: 5,
+        name: 'HealthTech Innovations',
+        status: 'Pending',
+        personal: {
+            fullName: 'Carol White',
+            username: 'carolw_ht',
+            email: 'carol.white@hti.com',
+            dateOfBirth: '07/11/1987',
+            gender: 'Female',
+            ssn: 'XXX-XX-1122',
+            governmentId: 'Carol_White_ID.pdf',
+            residentialAddress: generateAddress(5),
+        },
+        business: {
+            categories: 'Health, Technology',
+            registeredBusinessName: 'HealthTech Innovations Inc.',
+            dbaInfo: 'HealthHub',
+            tradeName: 'HTI',
+            dbaTradeDocuments: 'HTI_Docs.pdf',
+            businessContact: { email: 'info@hti.com' },
+        },
+        product: {
+            productType: 'Telemedicine Platform',
+            serviceDescription: 'Connects patients with healthcare providers online.',
+            pricingModel: 'Subscription-based for providers',
+            website: 'www.healthtechinnovations.com',
+        },
+    },
+    // ... add more detailed mock data for other IDs if needed by your BusinessInfo component
+    // Example for ID 56 (Verified Solutions Ltd)
+    56: {
+        id: 56,
+        name: 'Verified Solutions Ltd',
+        status: 'Verified',
+        personal: {
+            fullName: 'David Lee',
+            username: 'davidl_vsl',
+            email: 'david.lee@verifiedsolutions.com',
+            dateOfBirth: '02/28/1975',
+            gender: 'Male',
+            ssn: 'XXX-XX-3344',
+            governmentId: 'David_Lee_ID.pdf',
+            residentialAddress: generateAddress(56),
+        },
+        business: {
+            categories: 'Consulting',
+            registeredBusinessName: 'Verified Solutions Ltd',
+            dbaInfo: 'VSL Consulting',
+            tradeName: 'VSL',
+            dbaTradeDocuments: 'VSL_Docs.pdf',
+            businessContact: { email: 'contact@verifiedsolutions.com' },
+        },
+        product: {
+            productType: 'Business Consulting',
+            serviceDescription: 'Offers strategic consulting services for small to large businesses.',
+            pricingModel: 'Project-based fees',
+            website: 'www.verifiedsolutions.com',
+        },
+    },
+    // Example for ID 66 (Shady Deals Inc.)
+    66: {
+        id: 66,
+        name: 'Shady Deals Inc.',
+        status: 'Denied',
+        personal: {
+            fullName: 'Eve Green',
+            username: 'eveg_shady',
+            email: 'eve.green@shadydeals.com',
+            dateOfBirth: '11/05/1980',
+            gender: 'Female',
+            ssn: 'XXX-XX-5566',
+            governmentId: 'Eve_Green_ID.pdf',
+            residentialAddress: generateAddress(66),
+        },
+        business: {
+            categories: 'Retail',
+            registeredBusinessName: 'Shady Deals Inc.',
+            dbaInfo: 'N/A',
+            tradeName: 'Shady Deals',
+            dbaTradeDocuments: 'Shady_Deals_Docs.pdf',
+            businessContact: { email: 'support@shadydeals.com' },
+        },
+        product: {
+            productType: 'Discount Retail',
+            serviceDescription: 'Offers highly discounted, off-season goods. (Mock reason for Denied status).',
+            pricingModel: 'Per-item sales',
+            website: 'www.shadydeals.com',
+        },
+    },
+    // ... continue to add or dynamically generate data for the remaining IDs (7-85)
+  };
 
 
   useEffect(() => {
-    // In a real application, you'd fetch this data from an API
-    // For this example, we're using mock data
-    const data = mockDetailedBusinesses[businessId];
-    setBusinessData(data);
-  }, [businessId]);
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Active': return '#22C55E';
-      case 'Pending': return '#F59E0B';
-      case 'Inactive': return '#EF4444';
-      case 'Verified': return '#22C55E';
-      case 'Denied': return '#EF4444';
-      default: return '#6B7280';
+    if (businessId) {
+      // Simulate fetching data based on businessId
+      const data = mockDetailedBusinesses[businessId];
+      if (data) {
+        setBusinessData(data);
+      } else {
+        setBusinessData(null); // Or handle "not found"
+      }
     }
-  };
-
-  const handleVerify = () => {
-    if (businessData) {
-      updateBusinessStatus(businessData.id, 'Verified');
-    }
-  };
-
-  const handleDeny = () => {
-    if (businessData) {
-      updateBusinessStatus(businessData.id, 'Denied');
-    }
-  };
-
-  const renderContent = () => {
-    if (!businessData) return <div style={{ textAlign: 'center', padding: '20px' }}>No data found.</div>;
-
-    const { personal, business, product } = businessData;
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', fontSize: '14px', color: '#4b5563' }}>
-        {/* Personal Information Section */}
-        {activeTab === 'personal' && (
-          <>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#333', marginBottom: '10px' }}>Personal Information</h3>
-            <p><strong>Full Name:</strong> {personal.fullName}</p>
-            <p><strong>Username:</strong> {personal.username}</p>
-            <p><strong>Email:</strong> {personal.email}</p>
-            <p><strong>Date of Birth:</strong> {personal.dateOfBirth}</p>
-            <p><strong>Gender:</strong> {personal.gender}</p>
-            <p><strong>SSN:</strong> {personal.ssn}</p>
-            {/* Government Issued ID Link */}
-            <p><strong>Government Issued ID:</strong> <a href={`/${personal.governmentId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{personal.governmentId}</a></p>
-
-            {/* Residential Address Section */}
-            <div style={{ marginTop: '20px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#333', marginBottom: '10px' }}>Residential Address</h3>
-              <p><strong>Address Line 1:</strong> {personal.residentialAddress.addressLine1}</p>
-              <p><strong>Address Line 2:</strong> {personal.residentialAddress.addressLine2 || 'N/A'}</p>
-              <p><strong>City:</strong> {personal.residentialAddress.city}</p>
-              <p><strong>State:</strong> {personal.residentialAddress.state}</p>
-              <p><strong>Country:</strong> {personal.residentialAddress.country}</p>
-              <p><strong>Zip / Postal Code:</strong> {personal.residentialAddress.zipPostalCode}</p>
-            </div>
-          </>
-        )}
-
-        {/* Business Information Section */}
-        {activeTab === 'business' && (
-          <>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#333', marginBottom: '10px' }}>Business Information</h3>
-            <p><strong>Business Categories:</strong> {business.categories}</p>
-            <p><strong>Registered Business Name:</strong> {business.registeredBusinessName}</p>
-            <p><strong>DBA (Doing Business As) or official name change:</strong> {business.dbaInfo}</p>
-            <p><strong>Trade Name:</strong> {business.tradeName}</p>
-            {/* DBA and/or trade name documents Link */}
-            <p><strong>DBA and/or trade name documents:</strong> <a href={`/${business.dbaTradeDocuments}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{business.dbaTradeDocuments}</a></p>
-            <p><strong>Business Contact Email:</strong> {business.businessContact.email}</p>
-            <p><strong>Business Contact Phone:</strong> {business.businessContact.phone}</p>
-            <p><strong>Business Website:</strong> <a href={business.businessWebsite.startsWith('http') ? business.businessWebsite : `http://${business.businessWebsite}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{business.businessWebsite}</a></p>
-            <p><strong>Is it a registered Business:</strong> {business.isRegisteredBusiness}</p>
-            <p><strong>Employer ID Number (EIN):</strong> {business.employerIdNumber}</p>
-            <p><strong>Which country is this brand manufactured:</strong> {business.manufacturerCountry}</p>
-            <p><strong>What year did you launch this brand:</strong> {business.brandLaunchYear}</p>
-            <p><strong>Social Media:</strong> <a href="#" style={{ color: '#96105E', textDecoration: 'none' }}>{business.socialMedia}</a></p>
-
-            {/* Business Address Section */}
-            <div style={{ marginTop: '20px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#333', marginBottom: '10px' }}>Business Address</h3>
-              <p><strong>My company address is same as my residential address:</strong> {business.businessAddress.isSameAsResidential ? 'Yes' : 'No'}</p>
-              {!business.businessAddress.isSameAsResidential && (
-                <>
-                  <p><strong>Address Line 1:</strong> {business.businessAddress.addressLine1}</p>
-                  <p><strong>Address Line 2:</strong> {business.businessAddress.addressLine2 || 'N/A'}</p>
-                  <p><strong>City:</strong> {business.businessAddress.city}</p>
-                  <p><strong>State:</strong> {business.businessAddress.state}</p>
-                  <p><strong>Country:</strong> {business.businessAddress.country}</p>
-                  <p><strong>Zip / Postal Code:</strong> {business.businessAddress.zipPostalCode}</p>
-                </>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Product Information Section */}
-        {activeTab === 'product' && (
-          <>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#333', marginBottom: '10px' }}>Product Information</h3>
-            {/* Ingredient transparency document Link */}
-            <p><strong>Ingredient transparency document (Optional):</strong> <a href={`/${product.ingredientTransparencyDocument}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{product.ingredientTransparencyDocument || 'N/A'}</a></p>
-            {/* Packaging sustainability document Link */}
-            <p><strong>Packaging sustainability document (Optional):</strong> <a href={`/${product.packagingSustainabilityDocument}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{product.packagingSustainabilityDocument || 'N/A'}</a></p>
-            <p><strong>Is this product allowed to use everywhere:</strong> {product.allowedEverywhere}</p>
-            <p><strong>Country where Product Use is restricted:</strong> {product.restrictedCountries || 'N/A'}</p>
-            <p><strong>What is your brand promotional plan in Inforreel:</strong> {product.brandPromotionalPlan}</p>
-            <p><strong>Product description:</strong> {product.productDescription}</p>
-            <p><strong>What makes your product unique (USP):</strong> {product.productUniqueSellingPoint}</p>
-            <p><strong>Product video and photo (max 3 uploads):</strong></p>
-            <ul style={{ listStyle: 'none', paddingLeft: '20px' }}>
-              {product.productVideoPhoto && product.productVideoPhoto.length > 0 ? (
-                product.productVideoPhoto.map((file, idx) => (
-                  // Product video/photo Link
-                  <li key={idx}><a href={`/${file}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{file}</a></li>
-                ))
-              ) : (
-                <li>N/A</li>
-              )}
-            </ul>
-            {/* Compliance and QA upload Link */}
-            <p><strong>Compliance and QA upload (Optional):</strong> <a href={`/${product.complianceQAUpload}`} target="_blank" rel="noopener noreferrer" style={{ color: '#96105E', textDecoration: 'none' }}>{product.complianceQAUpload || 'N/A'}</a></p>
-          </>
-        )}
-      </div>
-    );
-  };
+  }, [businessId]); // Re-run when businessId changes
 
   if (!businessData) {
-    return null;
+    return (
+      <div
+        style={{
+          padding: "30px",
+          backgroundColor: "#f8f9fa",
+          flexGrow: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "18px",
+          color: "#6b7280",
+        }}
+      >
+        Loading business details... (or Business Not Found)
+      </div>
+    );
   }
+
+  // Handle local status updates in BusinessInfo if needed, but it won't affect Business.jsx's list without more state management.
+  const handleLocalStatusUpdate = (newStatus) => {
+    setBusinessData(prevData => ({ ...prevData, status: newStatus }));
+    // In a real app, you'd send this update to your backend API here
+    // And then potentially refresh the list in Business.jsx when returning
+  };
+
 
   return (
     <div
@@ -322,108 +292,146 @@ function BusinessInfo({ businessId, onBack, updateBusinessStatus }) {
         overflowY: "auto",
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h1
-          style={{
-            fontSize: "28px",
-            fontWeight: "700",
-            color: "#333",
-          }}
-        >
-          {businessData?.name} Details
-        </h1>
-        <button
-          onClick={onBack}
-          style={{
-            padding: "10px 16px",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            backgroundColor: "#fff",
-            color: "#374151",
-            fontSize: "14px",
-            fontWeight: "600",
-            cursor: "pointer",
-            transition: "all 0.2s",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#f3f4f6";
-            e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#fff";
-            e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05)";
-          }}
-        >
-          &larr; Back to Businesses
-        </button>
-      </div>
-
-      {/* Status and Action Buttons */}
-      <div
+      {/* Back button */}
+      <button
+        onClick={onBack}
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: '#fff',
-          borderRadius: '12px',
-          padding: '16px 24px',
-          boxShadow: '0 2px 20px rgba(0,0,0,0.08)',
-          border: '1px solid #f0f0f0',
-          marginBottom: '30px',
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "25px",
+          padding: "10px 15px",
+          borderRadius: "8px",
+          border: "1px solid #d1d5db",
+          backgroundColor: "#fff",
+          fontSize: "14px",
+          fontWeight: "500",
+          color: "#374151",
+          cursor: "pointer",
+          transition: "all 0.2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "#f3f4f6";
+          e.currentTarget.style.borderColor = "#9ca3af";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "#fff";
+          e.currentTarget.style.borderColor = "#d1d5db";
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>Status:</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+        Back to Businesses
+      </button>
+
+      <h1
+        style={{
+          fontSize: "28px",
+          fontWeight: "700",
+          color: "#333",
+          marginBottom: "20px",
+        }}
+      >
+        Business Details: {businessData.name}
+      </h1>
+
+      {/* Status & Actions */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "30px",
+          padding: "16px 24px",
+          backgroundColor: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+          border: "1px solid #f0f0f0",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <span style={{ fontSize: "15px", fontWeight: "600", color: "#4b5563" }}>
+            Current Status:
+          </span>
           <span
             style={{
-              display: 'inline-block',
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '13px',
-              fontWeight: '600',
-              backgroundColor: `${getStatusColor(businessData?.status)}15`,
-              color: getStatusColor(businessData?.status),
-              minWidth: '90px',
-              textAlign: 'center'
+              padding: "8px 16px",
+              borderRadius: "9999px",
+              fontWeight: "700",
+              fontSize: "14px",
+              backgroundColor:
+                businessData.status === "Verified"
+                  ? "#dcfce7"
+                  : businessData.status === "Pending"
+                  ? "#fffbe0"
+                  : "#fee2e2",
+              color:
+                businessData.status === "Verified"
+                  ? "#15803d"
+                  : businessData.status === "Pending"
+                  ? "#b45309"
+                  : "#dc2626",
             }}
           >
-            {businessData?.status}
+            {businessData.status}
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <button
-            onClick={handleVerify}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              backgroundColor: '#589E67',
-              color: '#fff',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: '0 2px 10px rgba(34,197,94,0.2)',
-            }}
-          >
-            Verify
-          </button>
-          <button
-            onClick={handleDeny}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              backgroundColor: '#AF4B4B',
-              color: '#fff',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: '0 2px 10px rgba(239,68,68,0.2)',
-            }}
-          >
-            Deny
-          </button>
+
+        {/* Action Buttons */}
+        <div style={{ display: "flex", gap: "10px" }}>
+          {businessData.status === 'Pending' && (
+            <>
+              <button
+                onClick={() => handleLocalStatusUpdate('Verified')}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: '#22c55e',
+                  color: '#fff',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 2px 10px rgba(34,197,94,0.2)',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(34,197,94,0.3)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 2px 10px rgba(34,197,94,0.2)'}
+              >
+                Verify
+              </button>
+              <button
+                onClick={() => handleLocalStatusUpdate('Denied')}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: '#ef4444',
+                  color: '#fff',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 2px 10px rgba(239,68,68,0.2)',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(239,68,68,0.3)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 2px 10px rgba(239,68,68,0.2)'}
+              >
+                Deny
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -454,16 +462,137 @@ function BusinessInfo({ businessId, onBack, updateBusinessStatus }) {
                 transition: 'all 0.2s',
                 textTransform: 'capitalize',
                 outline: 'none',
-                flexShrink: 0,
+                flexShrink: 0, // Prevent shrinking
               }}
             >
-              {tab} Information
+              {tab}
             </button>
           ))}
         </div>
-        <div>
-          {renderContent()}
-        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'personal' && (
+          <div>
+            <h3 style={{ fontSize: '20px', marginBottom: '15px', color: '#333' }}>Personal Information</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Full Name:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.fullName}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Username:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.username}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Email:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.email}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Date of Birth:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.dateOfBirth}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Gender:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.gender}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>SSN:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.ssn}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Government ID:</p>
+                <a href="#" style={{ fontSize: '15px', fontWeight: '500', color: '#96105E', textDecoration: 'none' }}>{businessData.personal.governmentId}</a>
+              </div>
+            </div>
+
+            <h4 style={{ fontSize: '18px', marginBottom: '10px', color: '#333', marginTop: '25px' }}>Residential Address</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Address Line 1:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.addressLine1}</p>
+              </div>
+              {businessData.personal.residentialAddress.addressLine2 && (
+                <div>
+                  <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Address Line 2:</p>
+                  <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.addressLine2}</p>
+                </div>
+              )}
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>City:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.city}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>State:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.state}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Country:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.country}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Zip/Postal Code:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.personal.residentialAddress.zipPostalCode}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'business' && (
+          <div>
+            <h3 style={{ fontSize: '20px', marginBottom: '15px', color: '#333' }}>Business Information</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Categories:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.business.categories}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Registered Business Name:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.business.registeredBusinessName}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>DBA/Info:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.business.dbaInfo}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Trade Name:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.business.tradeName}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>DBA/Trade Documents:</p>
+                <a href="#" style={{ fontSize: '15px', fontWeight: '500', color: '#96105E', textDecoration: 'none' }}>{businessData.business.dbaTradeDocuments}</a>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Business Contact Email:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.business.businessContact.email}</p>
+              </div>
+              {/* Add other business contact details if available in your mock data */}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'product' && (
+          <div>
+            <h3 style={{ fontSize: '20px', marginBottom: '15px', color: '#333' }}>Product/Service Information</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Product Type:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.product.productType}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Service Description:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.product.serviceDescription}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Pricing Model:</p>
+                <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937' }}>{businessData.product.pricingModel}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '5px' }}>Website:</p>
+                <a href={businessData.product.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '15px', fontWeight: '500', color: '#96105E', textDecoration: 'none' }}>{businessData.product.website}</a>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
